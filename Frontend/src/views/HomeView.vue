@@ -1,11 +1,11 @@
 <template>
   <main class="d-flex flex-column justify-content-center align-items-center vh-100 bg-white">
-    <!-- Centered Logo with increased spacing -->
+   
     <div class="mb-1">
       <img src="../assets/image.png" alt="IITM Logo" class="logo" width="200" height="200"/>
     </div>
 
-    <!-- Card with more separation from logo -->
+   
     <div class="card text-center p-5 rounded-lg shadow-lg border border-dark bg-white mt-4">
       <h1 class="text-warning mb-4">Welcome to the AI Tutor</h1>
       <div class="d-flex flex-column align-items-center gap-3">

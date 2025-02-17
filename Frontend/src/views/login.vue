@@ -27,7 +27,7 @@
               <input v-model="password" type="password" class="form-control border border-dark" style="width: 60%;" required />
             </div>
             
-            <!-- Button Container for Login and Clear buttons -->
+            
             <div class="d-flex justify-content-center gap-2">
               <router-link to="/home" class="w-45 ">
                 <button type="submit" class="btn btn-warning w-100 border border-dark ">Login</button>
