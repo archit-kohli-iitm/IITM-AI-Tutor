@@ -2,18 +2,18 @@
     <div class="container-fluid bg-light vh-100 d-flex flex-column">
       <!-- Header -->
       <nav class="navbar navbar-light bg-warning px-3 w-100">
-          <div>
-          <img src="../assets/image.png" alt="IITM Logo" class="logo me-2 " width="50" height="50"/>
-         <span class="navbar-brand mb-0 h1 text-dark">AI Tutor Application</span>
-        </div>
-          
-        <router-link to="/" class="btn btn-white bg-white text-dark w-5 border border-dark">Login</router-link>
+        <div class="mt-100">
+        <img src="../assets/image.png" alt="IITM Logo" class="logo me-2" width="50" height="50"/>
+    </div>
+        <span class="navbar-brand mb-0 h1 text-dark">AI Tutor Application</span>
+        
+        <router-link to="/" class="btn btn-white bg-white text-dark w-5 border border-dark">Logout</router-link>
       </nav>
       
       <div class="row flex-grow-1">
         <!-- Sidebar -->
-        <div class="col-3 bg-white border border-dark d-flex flex-column p-3">
-          <h5 class="text-dark mb-4 text-center">Subjects</h5>
+        <div class="col-3 bg-white  d-flex flex-column p-3">
+          <h5 class="text-dark mb-4 text-center ">Subjects</h5>
           <div v-for="(chats, subject) in chats" :key="subject" class="mb-4">
             <button 
               class="btn w-100 text-center" 
