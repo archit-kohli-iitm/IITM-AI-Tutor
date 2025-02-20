@@ -1,45 +1,39 @@
-# Frontend
+# AI Tutor for academic guidance
+### The application frontend is written in Vue and follows the standard Vue 3 code structure. The frontend has also been deployed and can be found at [ai-study-iitm.vercel.app](https://ai-study-iitm.vercel.app/)
+### Instructions to run the frontend locally:-
 
-This template should help get you started developing with Vue 3 in Vite.
+## Prerequisites
+- Node.js (recommended: v22.12.0)
+- npm (recommended: v10.9.0)
 
-## Recommended IDE Setup
+## Installation
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+1. `cd` into the frontend folder
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+2. Install dependencies
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+## Development
 
-```sh
+To run the development server:
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+The application will be available at [http://localhost:5173](http://localhost:5173/)
 
-```sh
-npm run build
-```
+## Project Structure
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+The project follows the standard Vue 3 structure with the following key files:
 
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+- `package.json`: Project dependencies and scripts
+- `vite.config.js`: Vite configuration file
+- `src/`: Source code directory
+  - `components/`: Vue components
+  - `router/index.ts`: Vue router
+  - `views`: Different applicaton views
+  - `assets/`: Static assets
+  - `App.vue`: Root component
+  - `main.ts`: Application entry point
