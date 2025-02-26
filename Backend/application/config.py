@@ -22,5 +22,5 @@ class DevConfig:
     CACHE_REDIS_PORT = 6379
     CACHE_REDIS_DB = 3
     os.environ.setdefault('FORKED_BY_MULTIPROCESSING', '1')
-    JWT_SECRET_KEY = 'f3a1b8d57e46b6fbe29c84e5a7d3c8d092c13e2fa8f72f9bb9b3a50f2938a1b4'
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+    JWT_SECRET_KEY = os.environ.get("SECRET_KEY")
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=2)

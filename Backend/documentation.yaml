@@ -1,0 +1,293 @@
+swagger: '2.0'
+basePath: /
+paths:
+  /auth/login:
+    post:
+      responses:
+        '200':
+          description: Successful login
+        '401':
+          description: Invalid email or password
+        '500':
+          description: Internal Server Error
+      operationId: post_login
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/Login'
+      tags:
+        - auth
+  /auth/logout:
+    post:
+      responses:
+        '200':
+          description: Successful logout
+        '422':
+          description: Invalid Token
+      operationId: post_logout
+      tags:
+        - auth
+  /auth/signup:
+    post:
+      responses:
+        '201':
+          description: Successful registeration
+        '400':
+          description: User already exists
+        '500':
+          description: Internal Server Error
+      operationId: post_signup
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/Signup'
+      tags:
+        - auth
+  /chats/create:
+    post:
+      responses:
+        '201':
+          description: Chat created successfully
+        '400':
+          description: Bad Request
+        '403':
+          description: Invalid User
+        '404':
+          description: Subject not found
+        '500':
+          description: Internal Server Error
+      summary: Create a new chat
+      operationId: post_create_chat_resource
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/Chat'
+      tags:
+        - Chat
+  /chats/{chat_id}:
+    parameters:
+      - name: chat_id
+        in: path
+        required: true
+        type: integer
+    delete:
+      responses:
+        '200':
+          description: Success
+      summary: Delete a chat
+      operationId: delete_chat_resource
+      tags:
+        - Chat
+    get:
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: Invalid User
+        '404':
+          description: Chat not found
+        '500':
+          description: Internal Server Error
+      summary: Get all messages from a chat
+      operationId: get_chat_resource
+      tags:
+        - Chat
+  /default/health:
+    get:
+      responses:
+        '200':
+          description: Success
+      operationId: get_health_check
+      tags:
+        - Default
+  /message/send:
+    post:
+      responses:
+        '200':
+          description: Streaming Response from AI
+        '403':
+          description: Invalid User
+        '500':
+          description: Internal Server Error
+      operationId: post_message_resource
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/Message'
+      tags:
+        - Message
+  /subjects/:
+    delete:
+      responses:
+        '200':
+          description: Subject deleted successfully
+        '400':
+          description: Bad Request
+        '403':
+          description: Unauthorized (Admin privilege required)
+        '404':
+          description: Subject not found
+        '500':
+          description: Internal Server Error
+      summary: Delete a subject
+      operationId: delete_subject_resource
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/Subject'
+      tags:
+        - Subject
+    post:
+      responses:
+        '200':
+          description: Subject updated successfully
+        '201':
+          description: Subject created successfully
+        '400':
+          description: Bad Request
+        '403':
+          description: Unauthorized (Admin privilege required)
+        '404':
+          description: Subject not found
+        '500':
+          description: Internal Server Error
+      summary: Create a new subject
+      operationId: post_subject_resource
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/Subject'
+      tags:
+        - Subject
+    get:
+      responses:
+        '200':
+          description: Subjects retrieved successfully
+        '403':
+          description: Unauthorized (Admin privilege required)
+        '500':
+          description: Internal Server Error
+      summary: Get all subjects
+      operationId: get_subject_resource
+      tags:
+        - Subject
+  /subjects/list:
+    get:
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: Invalid User
+        '404':
+          description: Subject not found
+        '500':
+          description: Internal Server Error
+      summary: Get all subjects and chats of a particular user
+      operationId: get_list_all_subject_chats
+      tags:
+        - Subject
+info:
+  title: API
+  version: '1.0'
+produces:
+  - application/json
+consumes:
+  - application/json
+tags:
+  - name: Default
+    description: Default operations
+  - name: auth
+    description: Authentication operations
+  - name: Subject
+    description: Operations for subjects
+  - name: Chat
+    description: Operations for chats
+  - name: Message
+    description: Operations for messages
+definitions:
+  Signup:
+    required:
+      - email
+      - name
+      - password
+    properties:
+      email:
+        type: string
+        description: User email
+      password:
+        type: string
+        description: User password
+      name:
+        type: string
+        description: Full name
+      phone:
+        type: string
+        description: Phone number
+      dob:
+        type: string
+        description: Date of birth
+      utype:
+        type: string
+        description: 'User type (Default: tpstudent)'
+        default: tpstudent
+    type: object
+  Login:
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: string
+        description: User email
+      password:
+        type: string
+        description: User password
+    type: object
+  Subject:
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        description: Subject Name
+    type: object
+  Chat:
+    required:
+      - subject_id
+    properties:
+      subject_id:
+        type: integer
+        description: Subject ID
+      title:
+        type: string
+        description: Chat Name
+    type: object
+  Message:
+    required:
+      - chat_id
+      - content
+    properties:
+      chat_id:
+        type: integer
+        description: Subject ID
+      content:
+        type: string
+        description: Message Content
+    type: object
+responses:
+  ParseError:
+    description: When a mask can't be parsed
+  MaskError:
+    description: When any error occurs on mask
