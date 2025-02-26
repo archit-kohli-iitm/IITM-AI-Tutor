@@ -46,3 +46,13 @@ class Message(mydb.Model):
 
     def __repr__(self):
         return f'<Message {self.msg_id}>'
+    
+    def to_dict(self):
+        return {
+            "msg_id": self.msg_id,
+            "chat_id": self.chat_id,
+            "content": self.content,
+            "msg_type": self.msg_type,
+            "context": self.context,
+            "timestamp": self.timestamp.isoformat()
+        }

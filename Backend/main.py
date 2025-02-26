@@ -1,4 +1,5 @@
 from flask import Flask, current_app
+from flask_cors import CORS
 from flask_restx import Resource, Api
 from flask_jwt_extended import JWTManager
 
@@ -31,6 +32,7 @@ def create_app():
     bcrypt = Bcrypt(myapp)
     cache.init_app(myapp)
     jwt = JWTManager(myapp)
+    CORS(myapp)
 
     # app initializations
     with myapp.app_context():
@@ -57,6 +59,7 @@ api.add_namespace(default_ns,'/default')
 api.add_namespace(auth_ns,'/auth')
 api.add_namespace(subject_ns,'/subjects')
 api.add_namespace(chat_ns,'/chats')
+api.add_namespace(message_ns,'/message')
 
 # run the app
 if __name__ == '__main__':
