@@ -55,7 +55,8 @@ from application.auth import *
 
 api.add_namespace(default_ns,'/default')
 api.add_namespace(auth_ns,'/auth')
-api.add_namespace(core_ns,'/core')
+api.add_namespace(subject_ns,'/subjects')
+api.add_namespace(chat_ns,'/chats')
 
 # run the app
 if __name__ == '__main__':
