@@ -1,6 +1,6 @@
 # AI Tutor for academic guidance
 
-### The application backend is written in Flask and follows the standard Flask REST API structure and best code practices.
+### The application backend is written in Flask and follows the standard Flask REST API structure and best code practices. The backend has also been deployed and can be found at [ai-study-iitm-backend.onrender.com](https://ai-tutor-iitm-backend.onrender.com)
 
 ## Features
 - RESTful API architecture
