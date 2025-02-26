@@ -95,4 +95,5 @@ The project follows the standard Flask API structure with the following key file
   - `utils.py`: Utility Functions
 - `instance/`: Database Instance
 - `main.py`: Entrypoint
+- `ingestion.ipynb`: Ingestion Code for Vector DB
 - `requirements.txt`: Project Requirements
