@@ -9,6 +9,7 @@ langchain-google-genai==2.0.9
 psutil==7.0.0
 python-dotenv==1.0.1
 PyYAML==6.0.2
+pytest==8.3.4
 qdrant-client[fastembed]==1.12.2
 regex==2023.8.8
 redis==4.5.5

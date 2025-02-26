@@ -2,3 +2,4 @@
 .myenv
 .env
 .vscode
+/Backend/venv

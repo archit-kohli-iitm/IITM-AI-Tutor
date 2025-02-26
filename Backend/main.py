@@ -7,6 +7,8 @@ from application.redis_cache import cache
 from application.agent import RAGModel
 from application.models import mydb
 from application.config import *
+from application.controllers import *
+from application.auth import *
 
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
@@ -22,9 +24,9 @@ GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 
 os.environ.setdefault('FORKED_BY_MULTIPROCESSING', '1')
 
-def create_app():    
+def create_app(config_class=DevConfig):    
     myapp = Flask(__name__)
-    myapp.config.from_object(DevConfig)
+    myapp.config.from_object(config_class)
 
     api = Api(myapp,validate=True)
     
@@ -47,19 +49,18 @@ def create_app():
 
         # check if the database exists
         mydb.create_all()
+        
+    
+
+    api.add_namespace(default_ns,'/default')
+    api.add_namespace(auth_ns,'/auth')
+    api.add_namespace(subject_ns,'/subjects')
+    api.add_namespace(chat_ns,'/chats')
+    api.add_namespace(message_ns,'/message')
     
     return myapp,api
 
 myapp,api = create_app()
-
-from application.controllers import *
-from application.auth import *
-
-api.add_namespace(default_ns,'/default')
-api.add_namespace(auth_ns,'/auth')
-api.add_namespace(subject_ns,'/subjects')
-api.add_namespace(chat_ns,'/chats')
-api.add_namespace(message_ns,'/message')
 
 # run the app
 if __name__ == '__main__':

@@ -24,3 +24,10 @@ class DevConfig:
     os.environ.setdefault('FORKED_BY_MULTIPROCESSING', '1')
     JWT_SECRET_KEY = os.environ.get("SECRET_KEY")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=2)
+
+class TestConfig:
+    TESTING = True 
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # In-memory SQLite for testing
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    CACHE_TYPE = 'SimpleCache'  
+    SECRET_KEY = 'hd6whai#fsu'
