@@ -115,7 +115,8 @@ class SubjectResource(Resource):
             mydb.session.rollback()
             return {'message': f'Error creating subject: {str(e)}'}, 500
     
-    @subject_ns.expect(subject_model)
+@subject_ns.route('/<int:subject_id>')
+class SpecificSubjectResource(Resource):
     @subject_ns.doc(
         responses={
             200: 'Subject deleted successfully',
@@ -127,18 +128,14 @@ class SubjectResource(Resource):
         description="Remove a subject from the database (Admin privileges required)"
     )
     @jwt_required()
-    def delete(self):
+    def delete(self, subject_id=None):
         """Delete a subject"""
         current_user_email = get_jwt_identity()
         user = User.query.filter_by(email=current_user_email).first()
         if not user or user.utype != "tpadmin":
             return {"message": "Admin privileges required"}, 403
         try:
-            data = request.get_json()
-            if not data.get('name'):
-                return {'message': 'Subject name is required'}, 400
-            subject_name = data.get('name')
-            subject = Subject.query.filter_by(name=subject_name).first()
+            subject = Subject.query.filter_by(subject_id=subject_id).first()
             if not subject:
                 return {'message': 'Subject not found'}, 404
                 
