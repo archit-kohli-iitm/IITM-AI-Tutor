@@ -17,11 +17,15 @@ start_time = time.time()
 #             HEALTH
 # -----------------------------------
 
-default_ns = Namespace('Default', description="Default operations")
+health_ns = Namespace('Health', description="Check API health")
 
-@default_ns.route('/health')
+@health_ns.route('/')
 class HealthCheck(Resource):
+    @health_ns.doc(
+        description="Get API health information like `uptime_seconds`, `cpu usage_percent` and `memory_usage_percent`"
+    )
     def get(self):
+        """Get health information"""
         uptime = time.time() - start_time
         cpu_usage = psutil.cpu_percent()
         memory_usage = psutil.virtual_memory().percent
@@ -40,7 +44,7 @@ class HealthCheck(Resource):
 #             SUBJECT
 # -----------------------------------
 
-subject_ns = Namespace('Subject', description="Operations for subjects")
+subject_ns = Namespace('Subject', description="Subject Management operations")
 subject_model = subject_ns.model('Subject', {
     'name': fields.String(required=True, description="Subject Name"),
 })
@@ -53,11 +57,11 @@ class SubjectResource(Resource):
             403: 'Unauthorized (Admin privilege required)',
             500: 'Internal Server Error'
         },
-
+        description="List all subjects currently available in the database along with their `subject_id` and `name`"
     )
     @jwt_required()
     def get(self):
-        """Get all subjects"""
+        """List all subjects"""
         current_user_email = get_jwt_identity()
         user = User.query.filter_by(email=current_user_email).first()
         if not user or user.utype != "tpadmin":
@@ -84,11 +88,11 @@ class SubjectResource(Resource):
             404: 'Subject not found',
             500: 'Internal Server Error'
         },
-
+        description="Add a new subject to the database (Admin privileges required)"
     )
     @jwt_required()
     def post(self):
-        """Create a new subject"""
+        """Add a new subject"""
         current_user_email = get_jwt_identity()
         user = User.query.filter_by(email=current_user_email).first()
         if not user or user.utype != "tpadmin":
@@ -119,7 +123,8 @@ class SubjectResource(Resource):
             403: 'Unauthorized (Admin privilege required)',
             404: 'Subject not found',
             500: 'Internal Server Error'
-        }
+        },
+        description="Remove a subject from the database (Admin privileges required)"
     )
     @jwt_required()
     def delete(self):
@@ -145,39 +150,6 @@ class SubjectResource(Resource):
             mydb.session.rollback()
             return {'message': f'Error deleting subject: {str(e)}'}, 500
 
-@subject_ns.route('/list')
-class ListAllSubjectChats(Resource):
-    @subject_ns.doc(
-        responses={
-            200: 'Success',
-            403: 'Invalid User',
-            404: 'Subject not found',
-            500: 'Internal Server Error'
-        }
-    )
-    @jwt_required()
-    def get(self):
-        """Get all subjects and chats of a particular user"""
-        try:
-            current_user_email = get_jwt_identity()
-            user = User.query.filter_by(email=current_user_email).first()
-            if not user:
-                return {"message": "Invalid User"}, 403            
-            result = []
-            for chat in user.chats:
-                subject = Subject.query.filter_by(subject_id=chat.subject_id).first()
-                result.append({
-                    'chat_id': chat.chat_id,
-                    'title': chat.title,
-                    'subject':{
-                        'subject_id': subject.subject_id,
-                        'name': subject.name
-                        },
-                    'created_at': chat.created_at.isoformat(),
-                })
-            return result, 200
-        except Exception as e:
-            return {'message': f'Error retrieving subjectChat(s): {str(e)}'}, 500
 
 # -----------------------------------
 #             CHAT
@@ -191,14 +163,15 @@ chat_model = chat_ns.model('Chat', {
 })
 
 @chat_ns.route('/<int:chat_id>')
-class ChatResource(Resource):
+class SpecificChatResource(Resource):
     @chat_ns.doc(
         responses={
             200: 'Success',
             403: 'Invalid User',
             404: 'Chat not found',
             500: 'Internal Server Error'
-        }
+        },
+        description="Get all messages from a particular `chat_id` (Chat must belong to the current user)"
     )
     @jwt_required()
     def get(self, chat_id=None):
@@ -228,6 +201,16 @@ class ChatResource(Resource):
         }
         return result, 200
     
+    @chat_ns.doc(
+        responses={
+            200: 'Success',
+            400: 'Bad Request',
+            403: 'Invalid User',
+            404: 'Chat not found',
+            500: 'Internal Server Error'
+        },
+        description="Get all messages from a particular `chat_id` (Chat must belong to the current user)"
+    )
     @jwt_required()
     def delete(self, chat_id=None):
         """Delete a chat"""
@@ -254,8 +237,41 @@ class ChatResource(Resource):
             return {'message': f'Error deleting chat: {str(e)}'}, 500
 
 
-@chat_ns.route('/create')
-class CreateChatResource(Resource):
+@chat_ns.route('/')
+class ChatResource(Resource):
+    @chat_ns.doc(
+        responses={
+            200: 'Success',
+            403: 'Invalid User',
+            404: 'Subject not found',
+            500: 'Internal Server Error'
+        },
+        description="Get a list of all chats of the current user including the `subject_id` and `subject_name`. (Does not include chat messages)"
+    )
+    @jwt_required()
+    def get(self):
+        """Lists all chats of the current user"""
+        try:
+            current_user_email = get_jwt_identity()
+            user = User.query.filter_by(email=current_user_email).first()
+            if not user:
+                return {"message": "Invalid User"}, 403            
+            result = []
+            for chat in user.chats:
+                subject = Subject.query.filter_by(subject_id=chat.subject_id).first()
+                result.append({
+                    'chat_id': chat.chat_id,
+                    'title': chat.title,
+                    'subject':{
+                        'subject_id': subject.subject_id,
+                        'subject_name': subject.name
+                        },
+                    'created_at': chat.created_at.isoformat(),
+                })
+            return result, 200
+        except Exception as e:
+            return {'message': f'Error retrieving subjectChat(s): {str(e)}'}, 500
+
     @chat_ns.expect(chat_model)
     @chat_ns.doc(
         responses={
@@ -264,7 +280,8 @@ class CreateChatResource(Resource):
             403: 'Invalid User',
             404: 'Subject not found',
             500: 'Internal Server Error'
-        }
+        },
+        description="Create a new chat belonging to the current user under a specified subject"
     )
     @jwt_required()
     def post(self, chat_id=None):
@@ -324,10 +341,12 @@ class MessageResource(Resource):
             200: 'Streaming Response from AI',
             403: 'Invalid User',
             500: 'Internal Server Error'
-        }
+        },
+        description="Send a message to the AI Tutor with context information automatically fetched from a particular `chat_id` and vector database (Returns a stream of output tokens)"
     )
     @jwt_required()
     def post(self):
+        """Send a message to the AI Tutor"""
         try:
             current_user_email = get_jwt_identity()
             user = User.query.filter_by(email=current_user_email).first()
