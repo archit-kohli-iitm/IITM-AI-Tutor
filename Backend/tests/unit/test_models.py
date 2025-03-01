@@ -9,11 +9,11 @@ def test_new_user(new_user):
     assert new_user.password == 'TestPwd'
     assert new_user.utype == 'user'
     #--- default values are correctly assigned or not ---
-    #assert new_user.active == False  
-    # assert new_user.phone == '0000000000'  
-    # assert new_user.dob == '1900-01-01'  
-    # assert new_user.flagged == 'N'  
-    # assert new_user.chats == []  # Should have no associated chats initially
+    assert new_user.active is False  
+    assert new_user.phone == '0000000000'  
+    assert new_user.dob == '1900-01-01'  
+    assert new_user.flagged == 'N'  
+    assert new_user.chats == []  # Should have no associated chats initially
 
 def test_new_subject(new_subject):
     """

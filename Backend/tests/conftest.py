@@ -21,7 +21,7 @@ def test_app():
         mydb.create_all()  # Create tables in the test database
         yield flask_app
         mydb.session.remove()
-        mydb.drop_all()  # Drop tables after tests to reset DB
+        mydb.drop_all()  # Drop tables after tests to reset db
 
 @pytest.fixture(scope='module')
 def test_client(test_app):
@@ -40,7 +40,7 @@ def db_session(test_app):
 
 @pytest.fixture(scope='function')
 def new_user(db_session):
-    # Create a new user and commit it to the test database.
+    # Create a new user and commit it to the test database
     user = User(name='Test User', email='testuser79@gmail.com', password='TestPwd', utype='user', active=False)
     db_session.add(user)
     db_session.commit()
@@ -51,7 +51,7 @@ def new_user(db_session):
 
 @pytest.fixture(scope='function')
 def new_subject(db_session):
-    # Create a new subject and commit it to the test database.
+    # Create a new subject and commit it to the test database
     subject = Subject(name='Artificial Intelligence')
     db_session.add(subject)
     db_session.commit()
