@@ -27,7 +27,7 @@ class DevConfig:
 
 class TestConfig:
     TESTING = True 
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # In-memory SQLite for testing
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///se_testdb.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    CACHE_TYPE = 'SimpleCache'  
+    CACHE_TYPE = 'SimpleCache'
     SECRET_KEY = 'hd6whai#fsu'
