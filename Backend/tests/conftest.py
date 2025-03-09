@@ -12,6 +12,7 @@ import pytest
 from main import create_app
 from application.config import TestConfig
 from application.models import User, Subject, Chat, Message, mydb
+from werkzeug.security import generate_password_hash
 
 @pytest.fixture(scope='module')
 def test_app():
@@ -41,7 +42,8 @@ def db_session(test_app):
 @pytest.fixture(scope='function')
 def new_user(db_session):
     # Create a new user and commit it to the test database
-    user = User(name='Test User', email='testuser79@gmail.com', password='TestPwd', utype='user', active=False)
+    pwd = generate_password_hash('TestPwd')
+    user = User(name='Test User', email='testuser79@gmail.com', password=pwd, utype='user', active=False)
     db_session.add(user)
     db_session.commit()
     yield user

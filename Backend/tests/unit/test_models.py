@@ -1,3 +1,5 @@
+from werkzeug.security import check_password_hash
+
 def test_new_user(new_user):
     """
     GIVEN a User model
@@ -6,7 +8,7 @@ def test_new_user(new_user):
     """
     assert new_user.name == 'Test User'
     assert new_user.email == 'testuser79@gmail.com'
-    assert new_user.password == 'TestPwd'
+    assert check_password_hash(new_user.password,'TestPwd')
     assert new_user.utype == 'user'
     #--- default values are correctly assigned or not ---
     assert new_user.active is False  
