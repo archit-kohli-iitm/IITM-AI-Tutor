@@ -97,3 +97,9 @@ The project follows the standard Flask API structure with the following key file
 - `main.py`: Entrypoint
 - `ingestion.ipynb`: Ingestion Code for Vector DB
 - `requirements.txt`: Project Requirements
+
+## Run the test cases
+   ```sh
+   cd Backend
+   pytest/tests
+   ```
