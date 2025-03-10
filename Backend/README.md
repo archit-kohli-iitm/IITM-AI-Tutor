@@ -101,5 +101,5 @@ The project follows the standard Flask API structure with the following key file
 ## Run the test cases
    ```sh
    cd Backend
-   pytest/tests
+   pytest --no-header --disable-warnings -q
    ```
