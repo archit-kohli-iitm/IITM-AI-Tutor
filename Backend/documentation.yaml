@@ -1,293 +1,378 @@
-swagger: '2.0'
-basePath: /
+openapi: 3.0.1
+info:
+  title: AI Tutor API
+  version: "1.0"
+servers:
+- url: /
+tags:
+- name: Health
+  description: Check API health
+- name: Auth
+  description: Authentication operations
+- name: Subject
+  description: Subject Management operations
+- name: Chat
+  description: Operations for chats
+- name: Message
+  description: Operations for messages
 paths:
   /auth/login:
     post:
-      responses:
-        '200':
-          description: Successful login
-        '401':
-          description: Invalid email or password
-        '500':
-          description: Internal Server Error
-      operationId: post_login
-      parameters:
-        - name: payload
-          required: true
-          in: body
-          schema:
-            $ref: '#/definitions/Login'
       tags:
-        - auth
+      - Auth
+      summary: Authenticate and login to the application
+      description: Authenticate an existing user into the application (Returns a JWT
+        `access_token` to be included with every request)
+      operationId: post_login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseAuth'
+        required: true
+      responses:
+        "200":
+          description: Successful login
+          content: {}
+        "401":
+          description: Invalid email or password
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: payload
   /auth/logout:
     post:
-      responses:
-        '200':
-          description: Successful logout
-        '422':
-          description: Invalid Token
-      operationId: post_logout
       tags:
-        - auth
+      - Auth
+      summary: Log out of the application
+      operationId: post_logout
+      responses:
+        "200":
+          description: Successful logout
+          content: {}
+        "422":
+          description: Invalid Token
+          content: {}
   /auth/signup:
     post:
-      responses:
-        '201':
-          description: Successful registeration
-        '400':
-          description: User already exists
-        '500':
-          description: Internal Server Error
+      tags:
+      - Auth
+      summary: Create and authenticate a new user into the application
+      description: Create and authenticate a new user into the application (Returns
+        a JWT `access_token` to be included with every request)
       operationId: post_signup
-      parameters:
-        - name: payload
-          required: true
-          in: body
-          schema:
-            $ref: '#/definitions/Signup'
-      tags:
-        - auth
-  /chats/create:
-    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signup'
+        required: true
       responses:
-        '201':
-          description: Chat created successfully
-        '400':
-          description: Bad Request
-        '403':
-          description: Invalid User
-        '404':
-          description: Subject not found
-        '500':
+        "201":
+          description: Successful registeration
+          content: {}
+        "400":
+          description: User already exists
+          content: {}
+        "500":
           description: Internal Server Error
-      summary: Create a new chat
-      operationId: post_create_chat_resource
-      parameters:
-        - name: payload
-          required: true
-          in: body
-          schema:
-            $ref: '#/definitions/Chat'
+          content: {}
+      x-codegen-request-body-name: payload
+  /chats/:
+    get:
       tags:
-        - Chat
+      - Chat
+      summary: Lists all chats of the current user
+      description: Get a list of all chats of the current user including the `subject_id`
+        and `subject_name`. (Does not include chat messages)
+      operationId: get_chat_resource
+      responses:
+        "200":
+          description: Success
+          content: {}
+        "403":
+          description: Invalid User
+          content: {}
+        "404":
+          description: Subject not found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+      - Chat
+      summary: Create a new chat
+      description: Create a new chat belonging to the current user under a specified
+        subject
+      operationId: post_chat_resource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Chat'
+        required: true
+      responses:
+        "201":
+          description: Chat created successfully
+          content: {}
+        "400":
+          description: Bad Request
+          content: {}
+        "403":
+          description: Invalid User
+          content: {}
+        "404":
+          description: Subject not found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: payload
   /chats/{chat_id}:
-    parameters:
+    get:
+      tags:
+      - Chat
+      summary: Get all messages from a chat
+      description: Get all messages from a particular `chat_id` (Chat must belong
+        to the current user)
+      operationId: get_specific_chat_resource
+      parameters:
       - name: chat_id
         in: path
         required: true
-        type: integer
-    delete:
+        schema:
+          type: integer
       responses:
-        '200':
+        "200":
           description: Success
-      summary: Delete a chat
-      operationId: delete_chat_resource
-      tags:
-        - Chat
-    get:
-      responses:
-        '200':
-          description: Success
-        '403':
+          content: {}
+        "403":
           description: Invalid User
-        '404':
+          content: {}
+        "404":
           description: Chat not found
-        '500':
+          content: {}
+        "500":
           description: Internal Server Error
-      summary: Get all messages from a chat
-      operationId: get_chat_resource
+          content: {}
+    delete:
       tags:
-        - Chat
-  /default/health:
-    get:
+      - Chat
+      summary: Delete a chat
+      description: Get all messages from a particular `chat_id` (Chat must belong
+        to the current user)
+      operationId: delete_specific_chat_resource
+      parameters:
+      - name: chat_id
+        in: path
+        required: true
+        schema:
+          type: integer
       responses:
-        '200':
+        "200":
           description: Success
-      operationId: get_health_check
+          content: {}
+        "400":
+          description: Bad Request
+          content: {}
+        "403":
+          description: Invalid User
+          content: {}
+        "404":
+          description: Chat not found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+  /health/:
+    get:
       tags:
-        - Default
+      - Health
+      summary: Get health information
+      description: "Get API health information like `uptime_seconds`, `cpu usage_percent`\
+        \ and `memory_usage_percent`"
+      operationId: get_health_check
+      responses:
+        "200":
+          description: Success
+          content: {}
   /message/send:
     post:
-      responses:
-        '200':
-          description: Streaming Response from AI
-        '403':
-          description: Invalid User
-        '500':
-          description: Internal Server Error
+      tags:
+      - Message
+      summary: Send a message to the AI Tutor
+      description: Send a message to the AI Tutor with context information automatically
+        fetched from a particular `chat_id` and vector database (Returns a stream
+        of output tokens)
       operationId: post_message_resource
-      parameters:
-        - name: payload
-          required: true
-          in: body
-          schema:
-            $ref: '#/definitions/Message'
-      tags:
-        - Message
-  /subjects/:
-    delete:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
       responses:
-        '200':
-          description: Subject deleted successfully
-        '400':
-          description: Bad Request
-        '403':
-          description: Unauthorized (Admin privilege required)
-        '404':
-          description: Subject not found
-        '500':
-          description: Internal Server Error
-      summary: Delete a subject
-      operationId: delete_subject_resource
-      parameters:
-        - name: payload
-          required: true
-          in: body
-          schema:
-            $ref: '#/definitions/Subject'
-      tags:
-        - Subject
-    post:
-      responses:
-        '200':
-          description: Subject updated successfully
-        '201':
-          description: Subject created successfully
-        '400':
-          description: Bad Request
-        '403':
-          description: Unauthorized (Admin privilege required)
-        '404':
-          description: Subject not found
-        '500':
-          description: Internal Server Error
-      summary: Create a new subject
-      operationId: post_subject_resource
-      parameters:
-        - name: payload
-          required: true
-          in: body
-          schema:
-            $ref: '#/definitions/Subject'
-      tags:
-        - Subject
-    get:
-      responses:
-        '200':
-          description: Subjects retrieved successfully
-        '403':
-          description: Unauthorized (Admin privilege required)
-        '500':
-          description: Internal Server Error
-      summary: Get all subjects
-      operationId: get_subject_resource
-      tags:
-        - Subject
-  /subjects/list:
-    get:
-      responses:
-        '200':
-          description: Success
-        '403':
+        "200":
+          description: Streaming Response from AI
+          content: {}
+        "403":
           description: Invalid User
-        '404':
-          description: Subject not found
-        '500':
+          content: {}
+        "500":
           description: Internal Server Error
-      summary: Get all subjects and chats of a particular user
-      operationId: get_list_all_subject_chats
+          content: {}
+      x-codegen-request-body-name: payload
+  /subjects/:
+    get:
       tags:
-        - Subject
-info:
-  title: API
-  version: '1.0'
-produces:
-  - application/json
-consumes:
-  - application/json
-tags:
-  - name: Default
-    description: Default operations
-  - name: auth
-    description: Authentication operations
-  - name: Subject
-    description: Operations for subjects
-  - name: Chat
-    description: Operations for chats
-  - name: Message
-    description: Operations for messages
-definitions:
-  Signup:
-    required:
+      - Subject
+      summary: List all subjects
+      description: List all subjects currently available in the database along with
+        their `subject_id` and `name`
+      operationId: get_subject_resource
+      responses:
+        "200":
+          description: Subjects retrieved successfully
+          content: {}
+        "403":
+          description: Unauthorized (Admin privilege required)
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+      - Subject
+      summary: Add a new subject
+      description: Add a new subject to the database (Admin privileges required)
+      operationId: post_subject_resource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subject'
+        required: true
+      responses:
+        "200":
+          description: Subject updated successfully
+          content: {}
+        "201":
+          description: Subject created successfully
+          content: {}
+        "400":
+          description: Bad Request
+          content: {}
+        "403":
+          description: Unauthorized (Admin privilege required)
+          content: {}
+        "404":
+          description: Subject not found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: payload
+  /subjects/{subject_id}:
+    delete:
+      tags:
+      - Subject
+      summary: Delete a subject
+      description: Remove a subject from the database (Admin privileges required)
+      operationId: delete_specific_subject_resource
+      parameters:
+      - name: subject_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Subject deleted successfully
+          content: {}
+        "400":
+          description: Bad Request
+          content: {}
+        "403":
+          description: Unauthorized (Admin privilege required)
+          content: {}
+        "404":
+          description: Subject not found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+components:
+  schemas:
+    Signup:
+      allOf:
+      - $ref: '#/components/schemas/BaseAuth'
+      - required:
+        - name
+        type: object
+        properties:
+          name:
+            type: string
+            description: Full name
+          phone:
+            type: string
+            description: Phone number
+          dob:
+            type: string
+            description: Date of birth
+          utype:
+            type: string
+            description: "User type (Default: tpstudent)"
+            default: tpstudent
+    BaseAuth:
+      required:
       - email
-      - name
       - password
-    properties:
-      email:
-        type: string
-        description: User email
-      password:
-        type: string
-        description: User password
-      name:
-        type: string
-        description: Full name
-      phone:
-        type: string
-        description: Phone number
-      dob:
-        type: string
-        description: Date of birth
-      utype:
-        type: string
-        description: 'User type (Default: tpstudent)'
-        default: tpstudent
-    type: object
-  Login:
-    required:
-      - email
-      - password
-    properties:
-      email:
-        type: string
-        description: User email
-      password:
-        type: string
-        description: User password
-    type: object
-  Subject:
-    required:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User email (must be unique)
+        password:
+          type: string
+          description: User password
+    Subject:
+      required:
       - name
-    properties:
-      name:
-        type: string
-        description: Subject Name
-    type: object
-  Chat:
-    required:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Subject Name
+    Chat:
+      required:
       - subject_id
-    properties:
-      subject_id:
-        type: integer
-        description: Subject ID
-      title:
-        type: string
-        description: Chat Name
-    type: object
-  Message:
-    required:
+      type: object
+      properties:
+        subject_id:
+          type: integer
+          description: Subject ID
+        title:
+          type: string
+          description: Chat Name
+    Message:
+      required:
       - chat_id
       - content
-    properties:
-      chat_id:
-        type: integer
-        description: Subject ID
-      content:
-        type: string
-        description: Message Content
-    type: object
-responses:
-  ParseError:
-    description: When a mask can't be parsed
-  MaskError:
-    description: When any error occurs on mask
+      type: object
+      properties:
+        chat_id:
+          type: integer
+          description: Subject ID
+        content:
+          type: string
+          description: Message Content
+  responses:
+    ParseError:
+      description: When a mask can't be parsed
+      content: {}
+    MaskError:
+      description: When any error occurs on mask
+      content: {}
+x-original-swagger-version: "2.0"

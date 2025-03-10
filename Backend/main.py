@@ -52,7 +52,7 @@ def create_app(config_class=DevConfig):
         
     
 
-    api.add_namespace(default_ns,'/default')
+    api.add_namespace(health_ns,'/health')
     api.add_namespace(auth_ns,'/auth')
     api.add_namespace(subject_ns,'/subjects')
     api.add_namespace(chat_ns,'/chats')
