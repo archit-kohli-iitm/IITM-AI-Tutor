@@ -3,3 +3,5 @@
 .env
 .vscode
 /Backend/venv
+.pytest_cache
+__pycache__

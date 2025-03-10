@@ -1,8 +1,11 @@
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from qdrant_client import QdrantClient, models
 from fastembed import TextEmbedding, SparseTextEmbedding
-from application.prompt import SYSTEM_PROMPT
+from application.prompt import SYSTEM_PROMPT, GUARDRAIL_PROMPT
+from application.constants import *
 import json
+from pydantic import BaseModel
+import re
 
 class ContextRetriever():
     dense_model_name = "models/text-embedding-004"
@@ -50,6 +53,29 @@ class RAGModel():
         return result
     
     def stream(self, query:str, chat_history:str=None):
+
+        try:
+            guardrail_prompt = GUARDRAIL_PROMPT.format(query=query)
+            class GuardrailResponse(BaseModel):
+                category: str
+            guardrail_response = self.llm.with_structured_output(GuardrailResponse).invoke(guardrail_prompt)
+            category = guardrail_response.get("category", "VALID")
+            if category not in categories:
+                category = "VALID"
+        except Exception as e:
+            print(f"Guardrail error: {e}")
+            category = "VALID"
+
+        if category != "VALID":
+            def rejection_response():
+                if category == "UNETHICAL":
+                    yield UNETHICAL_RESPONSE, None
+                elif category == "INVALID":
+                    yield INVALID_RESPONSE, None
+                else:
+                    yield ERROR_RESPONSE, None
+            return rejection_response()
+
         context_documents = self._get_context(query)
         context = "\n\n".join([doc["content"] for doc in context_documents])
         formatted_prompt = SYSTEM_PROMPT.format(chat_history=chat_history, input_query=query, context=context)
