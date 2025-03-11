@@ -59,6 +59,10 @@ class RAGModel():
             class GuardrailResponse(BaseModel):
                 category: str
             guardrail_response = self.llm.with_structured_output(GuardrailResponse).invoke(guardrail_prompt)
+            if guardrail_response is None:
+                guardrail_response = self.llm.invoke(guardrail_prompt)
+                guardrail_response = json.loads(re.search(r'{.*}', guardrail_response.content, re.DOTALL).group(0))
+
             category = guardrail_response.get("category", "VALID")
             if category not in categories:
                 category = "VALID"
