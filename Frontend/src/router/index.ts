@@ -4,6 +4,7 @@ import Signup from '../views/Signup.vue';
 import login from '@/views/login.vue';
 import home from '@/views/home.vue';
 import Course from '@/views/Course.vue';
+import chat from '@/views/chat.vue';
 const routes = [
   {
     path: '/',
@@ -14,6 +15,11 @@ const routes = [
     path: '/course',
     name: 'Course',
     component: Course,
+  },
+  {
+    path: '/Ai_Bot',
+    name: 'ai_bot',
+    component: chat,
   },
 
   {
