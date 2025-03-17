@@ -1,4 +1,4 @@
-from application.constants import UNETHICAL_RESPONSE, INVALID_RESPONSE
+from application.constants import UNETHICAL_RESPONSE, INVALID_RESPONSE, ERROR_RESPONSE
 
 def get_auth_headers(test_client, user_email, password="TestPwd"):
     """Logs in the user and returns authorization headers with a valid access token."""
@@ -84,7 +84,7 @@ def test_unethical_query(test_client, new_user, new_chat):
     response = test_client.post('/message/send', json=payload, headers=headers)
     assert response.status_code == 200 
     streamed_text = b"".join(response.response).decode('utf-8')
-    assert UNETHICAL_RESPONSE in streamed_text or "Error in generating response" in streamed_text
+    assert UNETHICAL_RESPONSE in streamed_text or ERROR_RESPONSE in streamed_text
 
 def test_invalid_query(test_client, new_user, new_chat):
     '''
@@ -98,5 +98,5 @@ def test_invalid_query(test_client, new_user, new_chat):
     response = test_client.post('/message/send', json=payload, headers=headers)
     assert response.status_code == 200 
     streamed_text = b"".join(response.response).decode('utf-8')
-    assert INVALID_RESPONSE in streamed_text or "Error in generating response" in streamed_text
+    assert INVALID_RESPONSE in streamed_text or ERROR_RESPONSE in streamed_text
     
