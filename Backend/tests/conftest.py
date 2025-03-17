@@ -2,12 +2,6 @@
 # The @pytest.fixture decorator specifies that this function is a fixture with module/function-level scope. 
 # In other words, this fixture will be called one per test module.
 
-# import sys
-# import os
-# # Add the path to folder1 to the Python path
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
-#from flask import current_app as myapp
-
 import pytest
 from main import create_app
 from application.config import TestConfig
