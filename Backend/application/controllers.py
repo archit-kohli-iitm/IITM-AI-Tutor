@@ -8,6 +8,7 @@ from flask import Flask, after_this_request, send_file, abort, request, stream_w
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from application.models import Subject, mydb, User, Chat, Message
+from application.constants import *
 from application.utils import *
 
 
@@ -360,10 +361,7 @@ class MessageResource(Resource):
                 complete_response = []
                 context = None
                 try:
-                    # Store user message immediately
                     user_message = Message(content=content, context='')
-                    chat.messages.append(user_message)
-                    mydb.session.commit()
 
                     # Get streaming response from LLM
                     response_generator = getQueryResponse(content, chat.messages)
@@ -382,20 +380,15 @@ class MessageResource(Resource):
                         msg_type='assistant',
                         context=context if context else ''
                     )
+                    chat.messages.append(user_message)
                     chat.messages.append(ai_message)
                     mydb.session.commit()
 
                 except Exception as e:
-                    error_msg = "Error: Failed to get response. Please try again."
-                    yield error_msg
+                    print("Error inside generate response",e)
+                    mydb.session.rollback()
+                    yield ERROR_RESPONSE
                     
-                    ai_message = Message(
-                        content=error_msg,
-                        msg_type='assistant',
-                        context=''
-                    )
-                    chat.messages.append(ai_message)
-                    mydb.session.commit()
             return Response(
                 stream_with_context(generate_response()),
                 mimetype='text/plain'
