@@ -11,6 +11,7 @@ QDRANT_CLIENT_URL = os.environ.get("QDRANT_CLIENT_URL")
 QDRANT_CLIENT_API_KEY = os.environ.get("QDRANT_CLIENT_API_KEY")
 COLLECTION_NAME = os.environ.get("COLLECTION_NAME")
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+GEMINI_MODEL_NAME = os.environ.get("GEMINI_MODEL_NAME")
 
 # retry decorator
 def retry(func):
@@ -27,7 +28,7 @@ def retry(func):
 def getAgent():
     if not hasattr(current_app, "agent"):
         current_app.agent = RAGModel(
-            gemini_model_name="gemini-exp-1206",
+            gemini_model_name=GEMINI_MODEL_NAME,
             gemini_api_key=GOOGLE_API_KEY,
             qdrant_collection_name=COLLECTION_NAME,
             qdrant_client_url=QDRANT_CLIENT_URL,

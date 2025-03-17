@@ -1,4 +1,4 @@
-from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
+from google import genai
 from qdrant_client import QdrantClient, models
 from fastembed import TextEmbedding, SparseTextEmbedding
 from application.prompt import SYSTEM_PROMPT, GUARDRAIL_PROMPT
@@ -11,16 +11,22 @@ class ContextRetriever():
     dense_model_name = "models/text-embedding-004"
 
     def __init__(self, collection_name, client_url, google_api_key, qdrant_api_key=None):
-
-        self.client = QdrantClient(url=client_url,api_key=qdrant_api_key)
+        self.client = QdrantClient(url=client_url, api_key=qdrant_api_key)
         self.collection_name = collection_name
-        self.dense_embedding_model = GoogleGenerativeAIEmbeddings(model=self.dense_model_name,google_api_key=google_api_key)
+        self.genai_client = genai.Client(api_key=google_api_key)
         
         if not self.client.collection_exists(collection_name):
             raise Exception(f"Collection with name {collection_name} does not exist. Please create the collection first")
 
+    def embed_query(self, text):
+        response = self.genai_client.models.embed_content(
+            model=self.dense_model_name,
+            contents=[text],
+        )
+        return response.embeddings[0].values
+
     def retrieve(self, query, num_documents=10):
-        dense_query_vector = self.dense_embedding_model.embed_query(query)
+        dense_query_vector = self.embed_query(query)
         prefetch = [
             models.Prefetch(
                 query=dense_query_vector,
@@ -41,8 +47,9 @@ class ContextRetriever():
         return results
 
 class RAGModel():
-    def __init__(self,gemini_model_name:str,gemini_api_key:str,qdrant_collection_name:str,qdrant_client_url:str,qdrant_api_key:str):
-        self.llm = ChatGoogleGenerativeAI(model=gemini_model_name,api_key=gemini_api_key)
+    def __init__(self, gemini_model_name:str, gemini_api_key:str, qdrant_collection_name:str, qdrant_client_url:str, qdrant_api_key:str):
+        self.genai_client = genai.Client(api_key=gemini_api_key)
+        self.model_name = gemini_model_name
         self.retriever = ContextRetriever(qdrant_collection_name, qdrant_client_url, gemini_api_key, qdrant_api_key)
 
     def _get_context(self, query:str):
@@ -53,22 +60,19 @@ class RAGModel():
         return result
     
     def stream(self, query:str, chat_history:str=None):
-
-        try:
-            guardrail_prompt = GUARDRAIL_PROMPT.format(query=query)
-            class GuardrailResponse(BaseModel):
-                category: str
-            guardrail_response = self.llm.with_structured_output(GuardrailResponse).invoke(guardrail_prompt)
-            if guardrail_response is None:
-                guardrail_response = self.llm.invoke(guardrail_prompt)
-                guardrail_response = json.loads(re.search(r'{.*}', guardrail_response.content, re.DOTALL).group(0))
-
-            category = guardrail_response.get("category", "VALID")
-            if category not in categories:
-                category = "VALID"
-        except Exception as e:
-            print(f"Guardrail error: {e}")
-            category = "VALID"
+        guardrail_prompt = GUARDRAIL_PROMPT.format(query=query)
+        
+        # Handle guardrail check
+        response = self.genai_client.models.generate_content(
+            model=self.model_name,
+            contents=guardrail_prompt,
+            config=genai.types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema={"type": "object", "properties": {"category": {"type": "string"}}}
+            )
+        )
+        
+        category = response.parsed.get("category", None)
 
         if category != "VALID":
             def rejection_response():
@@ -84,13 +88,17 @@ class RAGModel():
         context = "\n\n".join([doc["content"] for doc in context_documents])
         formatted_prompt = SYSTEM_PROMPT.format(chat_history=chat_history, input_query=query, context=context)
         
-        stream = self.llm.stream(formatted_prompt)
+        # Stream response
+        stream = self.genai_client.models.generate_content_stream(
+            model=self.model_name,
+            contents=formatted_prompt
+        )
         
         def response_generator():
             full_response = []
             try:
                 for chunk in stream:
-                    chunk_text = chunk.content
+                    chunk_text = chunk.text
                     full_response.append(chunk_text)
                     yield chunk_text, None  # Streaming chunk
                 
@@ -98,7 +106,7 @@ class RAGModel():
                 yield ''.join(full_response), context
             except Exception as e:
                 print(f"Streaming error: {e}")
-                yield "Error in generating response", None
+                yield ERROR_RESPONSE, None
                 
         return response_generator()
     
@@ -109,6 +117,10 @@ class RAGModel():
         context_documents = self._get_context(query)
         context = "\n\n".join([doc["content"] for doc in context_documents])
         formatted_prompt = SYSTEM_PROMPT.format(chat_history=chat_history, input_query=query, context=context)
-        response = self.llm.invoke(formatted_prompt)
         
-        return response, context
+        response = self.genai_client.models.generate_content(
+            model=self.model_name,
+            contents=formatted_prompt
+        )
+        
+        return response.text, context
