@@ -11,29 +11,20 @@
     
     <div class="row flex-grow-1 p-3">
       <div class="col-12 d-flex flex-wrap justify-content-start">
-        <router-link 
-          v-for="(details, subject) in chats" 
-          :key="subject" 
-          :to="{ path: '/course', query: { subject: subject } }"
-          class="card-link"
-        >
-          <div class="card m-3 p-3" style="width: 20rem;">
-            <div class="card-header bg-dark text-white text-center">
-              <h5>{{ subject }}</h5>
-              <small v-if="details.repeat" class="text-warning">REPEAT FULL COURSE</small>
-              <small v-else class="text-light">NEW COURSE</small>
-            </div>
-            <div class="card-body">
-              <ul class="list-unstyled">
-                <li v-for="(score, week) in details.assignments" :key="week">
-                  {{ week }} Assignment - {{ score }}
-                </li>
-              </ul>
-              <p v-if="details.quiz">Quiz - {{ details.quiz }}</p>
-              <p><strong>Allowed to take End Term Exam?</strong> {{ details.allowed ? 'Yes' : 'No' }}</p>
-            </div>
+        <div v-for="(details, subject) in chats" :key="subject" class="card m-3 p-3" style="width: 20rem;">
+          <div class="card-header bg-dark text-white text-center">
+            <h5>{{ subject }}</h5>
+            <small v-if="details.repeat" class="text-warning">REPEAT FULL COURSE</small>
+            <small v-else class="text-light">NEW COURSE</small>
           </div>
-        </router-link>
+          <div class="card-body">
+            <ul class="list-unstyled">
+              <li v-for="(score, week) in details.assignments" :key="week">{{ week }} Assignment - {{ score }}</li>
+            </ul>
+            <p v-if="details.quiz">Quiz - {{ details.quiz }}</p>
+            <p><strong>Allowed to take End Term Exam?</strong> {{ details.allowed ? 'Yes' : 'No' }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -55,6 +46,7 @@ export default {
             "Week 6": 100,
             "Week 7": 100,
           },
+          
           allowed: true,
         },
         "Software Engineering": {
@@ -67,6 +59,7 @@ export default {
             "Week 5": 92,
             "Week 7": 80,
           },
+         
           allowed: true,
         },
         "AI: Search Methods for Problem Solving": {
@@ -80,6 +73,7 @@ export default {
             "Week 6": 17,
             "Week 7": "Absent",
           },
+          
           allowed: true,
         },
       },
@@ -100,17 +94,9 @@ export default {
 .card {
   border-radius: 10px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-in-out;
-}
-.card:hover {
-  transform: scale(1.05);
 }
 .card-header {
   font-size: 1.2rem;
   font-weight: bold;
-}
-.card-link {
-  text-decoration: none;
-  color: inherit;
 }
 </style>
