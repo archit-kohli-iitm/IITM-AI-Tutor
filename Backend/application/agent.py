@@ -56,13 +56,21 @@ class PromptBuilder:
         return SYSTEM_PROMPT.format(chat_history=chat_history, input_query=query, context=context)
     
     @staticmethod
-    def build_summarization_prompt() -> str:
-        return SUMMARIZATION_PROMPT
+    def build_summarization_prompt(chat_history: str) -> str:
+        return SUMMARIZATION_PROMPT.format(chat_history=chat_history)
     
     @staticmethod
-    def build_classifier_prompt(query: str) -> str:
-        return CLASSIFIER_PROMPT.format(query=query)
+    def build_classifier_prompt(query: str, chat_history: str) -> str:
+        return CLASSIFIER_PROMPT.format(query=query, chat_history=chat_history)
+    
+    @staticmethod
+    def build_assignment_prompt(query: str, assgn_type: str, chat_history:str) -> str:
+        if assgn_type == "PRACTICE":
+            return PRACTICE_ASSIGNMENT_PROMPT.format(query=query, chat_history=chat_history)
+        else:
+            return GRADED_ASSIGNMENT_PROMPT.format(query=query, chat_history=chat_history)
 
+class Utils:
     @staticmethod
     def jsonify(s: str):
         s = re.sub(r"```(?:json)?", "", s, flags=re.IGNORECASE).strip()
@@ -73,20 +81,24 @@ class PromptBuilder:
 
         json_str = match.group(1)
         return json.loads(json_str)
+    
+    @staticmethod
+    def extractWeek(w: int):
+        return week2assgn["Week "+str(w)]
 
 class QueryClassifier:
     def __init__(self, client, model_name):
         self.client = client
         self.model_name = model_name
 
-    def classify(self, query: str) -> str:
-        prompt = PromptBuilder.build_classifier_prompt(query)
+    def classify(self, query: str, chat_history:str) -> str:
+        prompt = PromptBuilder.build_classifier_prompt(query, chat_history)
         try:
             response = self.client.models.generate_content(
                 model=self.model_name,
                 contents=prompt
             )
-            response = PromptBuilder.jsonify(response.text)
+            response = Utils.jsonify(response.text)
             return response
         except Exception as e:
             print("Error in classify", e)
@@ -184,23 +196,38 @@ class RAGModel:
         context_documents = self.retriever.retrieve(query).points
         return "\n\n".join([doc.payload["content"] for doc in context_documents])
 
-    def stream(self, query: str, chat_history: str = None):
-        category = self.classifier.classify(query)
+    def _get_context_source(self, query: str) -> tuple[str, str]:
+        week = int(self.retriever.retrieve(query,1).points[0].payload["metadata"]["week"])
+        if week%2 == 0:
+            assgn_type = "GRADED"
+        else:
+            assgn_type = "PRACTICE"
+        source_path = Utils.extractWeek(week)
+        return source_path, assgn_type
 
-        if category["guardrail_category"] != "VALID":
+    def stream(self, query: str, chat_history: str = None):
+        category = self.classifier.classify(query, chat_history)
+
+        if category["guardrail_category"] not in ["VALID","UNETHICAL"] :
             return self.generator.rejection_generator(category["guardrail_category"])
         
-        if category["category"] == "SUMMARIZATION":
-            try:
-                pdf_path = week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]
-            except Exception as e:
-                return self.generator.rejection_generator("NOT_FOUND")
-            prompt = PromptBuilder.build_summarization_prompt()
-            return self.generator.stream_response(prompt=prompt,pdf_paths=[pdf_path])
+        if category["guardrail_category"] == "UNETHICAL":
+            source, assgn_type = self._get_context_source(query)
+            prompt = PromptBuilder.build_assignment_prompt(query, assgn_type, chat_history)
+            return self.generator.stream_response(prompt=prompt, pdf_paths=[source])
         else:
-            context = self._get_context_string(query)
-            prompt = PromptBuilder.build_system_prompt(query, chat_history, context)
-            return self.generator.stream_response(prompt=prompt, context=context)
+            if category["category"] == "SUMMARIZATION":
+                try:
+                    pdf_path = week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]
+                except Exception as e:
+                    return self.generator.rejection_generator("NOT_FOUND")
+                prompt = PromptBuilder.build_summarization_prompt(chat_history)
+                return self.generator.stream_response(prompt=prompt,pdf_paths=[pdf_path])
+            
+            else:
+                context = self._get_context_string(query)
+                prompt = PromptBuilder.build_system_prompt(query, chat_history, context)
+                return self.generator.stream_response(prompt=prompt, context=context)
 
     def __call__(self, query: str, chat_history: str = None):
         context = self._get_context_string(query)
