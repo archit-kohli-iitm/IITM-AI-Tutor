@@ -3,19 +3,20 @@
     <nav class="navbar navbar-light bg-warning px-3 w-100">
       <div class="mt-100">
         <img src="../assets/image.png" alt="IITM Logo" class="logo me-2" width="50" height="50"/>
-        <button class="btn btn-light border-dark ms-2" @click="reloadPage">Refresh</button>
+        
       </div>
       <span class="navbar-brand mb-0 h1 text-dark">Welcome to the AI Tutor, Sandeep</span>
       <button class="btn btn-light border-dark" @click="logout">Logout</button>
     </nav>
-    
+
     <div class="row flex-grow-1 p-3">
       <div class="col-12 d-flex flex-wrap justify-content-start">
-        <router-link 
-          v-for="(details, subject) in chats" 
-          :key="subject" 
+        <router-link
+          v-for="(details, subject) in chats"
+          :key="subject"
           :to="{ path: '/course', query: { subject: subject } }"
           class="card-link"
+          
         >
           <div class="card m-3 p-3" style="width: 20rem;">
             <div class="card-header bg-dark text-white text-center">
@@ -40,6 +41,8 @@
 </template>
 
 <script>
+import axios from "axios"; // Import axios
+
 export default {
   data() {
     return {
@@ -88,23 +91,22 @@ export default {
   methods: {
     reloadPage() {
       window.location.reload();
-
-    },   
-     logout(){
+    },
+    logout() {
       localStorage.clear();
-      this.$router.push({name:"HOME"})
+      this.$router.push({ name: "HOME" });
+    },
+    
+  },
+  mounted() {
+    let user = localStorage.getItem("user-info");
+    if (!user) {
+      this.$router.push({ name: "Login" });
     }
   },
-  mounted(){
-    let user=localStorage.getItem("user-info");
-    console.log(`here`)
-    console.log(user)
-    if(!user){
-      this.$router.push({name:"Login"})
-    }
-  }
 };
 </script>
+
 
 <style scoped>
 .container-fluid {
@@ -113,7 +115,7 @@ export default {
 .card {
   border-radius: 10px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-in-out
+  transition: transform 0.2s ease-in-out;
 }
 .card:hover {
   transform: scale(1.05);
@@ -125,5 +127,6 @@ export default {
 .card-link {
   text-decoration: none;
   color: inherit;
+  cursor: pointer;
 }
 </style>
