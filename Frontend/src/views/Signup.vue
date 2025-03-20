@@ -42,7 +42,7 @@
             <br>
           
             <div class="d-flex justify-content-center gap-5">
-              <button type="submit" class="btn btn-warning w-25  border border-dark">Sign up</button>
+              <button type="submit" class="btn btn-warning w-25  border border-dark"v-on:click="handleSignup">Sign up</button>
               <button type="button" class="btn btn-secondary w-25 border border-dark" @click="clearForm">Clear</button>
             </div>
             
@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import axios from "axios"
 export default {
   data() {
     return {
@@ -64,13 +65,30 @@ export default {
     };
   },
   methods: {
-    handleSignup() {
-      alert(`Signup successful for: ${this.name}`);
+    async handleSignup() {
+      let result = await axios.post("http://127.0.0.1:5000/auth/signup",{
+      email:this.email,
+      name:this.name,
+      password:this.password, 
+    });
+      console.log(result)
+      
+      if(result.status==201){
+        alert(`Signup successful for: ${this.name}`);
+        localStorage.setItem("user-info",JSON.stringify(result.data))
+        // this.$router.push({name:"Login"})
+      }
     },
     clearForm() {
       this.email = '';
       this.name = '';
       this.password = '';
+    }
+  },
+  mounted(){
+    let user=localStorage.getItem("user-info");
+    if(user){
+      this.$router.push({name:"Home"})
     }
   }
 };
