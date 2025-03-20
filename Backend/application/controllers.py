@@ -356,6 +356,8 @@ class MessageResource(Resource):
             content = data.get('content')
             
             chat = Chat.query.filter_by(chat_id=chat_id).first()
+            if not chat:
+                return {"message": "Chat Id not found"}, 400
             
             def generate_response():
                 complete_response = []
