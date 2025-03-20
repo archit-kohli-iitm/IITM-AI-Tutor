@@ -6,7 +6,7 @@
         <button class="btn btn-light border-dark ms-2" @click="reloadPage">Refresh</button>
       </div>
       <span class="navbar-brand mb-0 h1 text-dark">Welcome to the AI Tutor, Sandeep</span>
-      <router-link to="/" class="btn btn-light border-dark">Log out</router-link>
+      <button class="btn btn-light border-dark" @click="logout">Logout</button>
     </nav>
     
     <div class="row flex-grow-1 p-3">
@@ -88,8 +88,21 @@ export default {
   methods: {
     reloadPage() {
       window.location.reload();
-    },
+
+    },   
+     logout(){
+      localStorage.clear();
+      this.$router.push({name:"HOME"})
+    }
   },
+  mounted(){
+    let user=localStorage.getItem("user-info");
+    console.log(`here`)
+    console.log(user)
+    if(!user){
+      this.$router.push({name:"Login"})
+    }
+  }
 };
 </script>
 
@@ -100,7 +113,7 @@ export default {
 .card {
   border-radius: 10px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out
 }
 .card:hover {
   transform: scale(1.05);
