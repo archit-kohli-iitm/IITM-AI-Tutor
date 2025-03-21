@@ -66,19 +66,43 @@ export default {
   },
   methods: {
     async handleSignup() {
-      let result = await axios.post("/auth/signup",{
-      email:this.email,
-      name:this.name,
-      password:this.password, 
+  if (!this.email.trim() || !this.name.trim() || !this.password.trim()) {
+    alert("All fields are required. Please fill in all the details.");
+    return;
+  }
+
+  try {
+    let result = await axios.post("/auth/signup", {
+      email: this.email,
+      name: this.name,
+      password: this.password,
     });
-      console.log(result)
-      
-      if(result.status==201){
-        alert(`Signup successful for: ${this.name}`);
-        localStorage.setItem("user-info",JSON.stringify(result.data))
-         this.$router.push({name:"Login"})
+
+    if (result.status === 201) {
+      alert(`Signup successful for: ${this.name}`);
+      localStorage.setItem("user-info", JSON.stringify(result.data));
+      this.$router.push({ name: "Login" });
+    }
+  } catch (error) {
+    if (error.response) {
+      // Backend responded with an error status
+      if (error.response.status === 400) {
+        
+        alert("Email already registered. Please use a different email.");
+      } else if (error.response.status === 409) {
+        alert("Invalid data. Please check your input.");
+      } else {
+        alert(`Signup failed: ${error.response.data.message || "Unknown error"}`);
       }
-    },
+    } else if (error.request) {
+      alert("Network error. Please check your connection.");
+    } else {
+      alert("An unexpected error occurred. Please try again.");
+    }
+  }
+}
+
+,
     clearForm() {
       this.email = '';
       this.name = '';
