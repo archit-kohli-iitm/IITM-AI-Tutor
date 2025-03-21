@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     async handleSignup() {
-      let result = await axios.post("http://127.0.0.1:5000/auth/signup",{
+      let result = await axios.post("/auth/signup",{
       email:this.email,
       name:this.name,
       password:this.password, 
@@ -76,7 +76,7 @@ export default {
       if(result.status==201){
         alert(`Signup successful for: ${this.name}`);
         localStorage.setItem("user-info",JSON.stringify(result.data))
-        // this.$router.push({name:"Login"})
+         this.$router.push({name:"Login"})
       }
     },
     clearForm() {

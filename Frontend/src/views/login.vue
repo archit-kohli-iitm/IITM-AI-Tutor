@@ -63,21 +63,31 @@ export default {
   },
   methods: {
     async handleLogin() {  
-      let result = await axios.post("http://127.0.0.1:5000/auth/login",{
-      email:this.email,
-      password:this.password, 
+  try {
+    let result = await axios.post("/auth/login", {
+      email: this.email,
+      password: this.password, 
     });
-    if(result.status==200){
-        alert(` successful login  for: ${this.email}`);
-        localStorage.setItem("user-info",JSON.stringify(result.data))
-        this.$router.push({name:"Home"})
-      }
-    
-    if(result.status==401){
-      alert(result.status)
+
+    if (result.status === 200) {
+      alert(`Successful login for: ${this.email}`);
+      localStorage.setItem("user-info", JSON.stringify(result.data));
+      this.$router.push({ name: "Home" });
     }
 
-    },
+  } catch (error) {
+    if (error.response) {
+      if (error.response.status === 401) {
+        alert("Unauthorized: Incorrect email or password.");
+      } else {
+        alert(`Error: ${error.response.status} - ${error.response.data.message}`);
+      }
+    } else {
+      alert("Network error. Please try again later.");
+    }
+    console.error("Login Error:", error);
+  }
+},
     
     clearForm() {
       this.email = '';
