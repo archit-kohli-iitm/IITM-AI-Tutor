@@ -37,11 +37,11 @@
             <br>
           
             <div class="d-flex justify-content-center gap-5">
-              <router-link to="/home">
-                <button type="submit" class="btn btn-warning border border-dark" style="width: 100px;">
+              
+                <button  type="submit" class="btn btn-warning border border-dark" style="width: 100px;">
                   Log in
                 </button>
-              </router-link>
+              
               <button type="button" class="btn btn-secondary w-25 border border-dark" @click="clearForm">Clear</button>
             </div>
           
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import axios from "axios"
 export default {
   data() {
     return {
@@ -61,12 +62,42 @@ export default {
     };
   },
   methods: {
-    handleLogin() {
-      alert(`Login successful for: ${this.email}`);
-    },
+    async handleLogin() {  
+  try {
+    let result = await axios.post("/auth/login", {
+      email: this.email,
+      password: this.password, 
+    });
+
+    if (result.status === 200) {
+      alert(`Successful login for: ${this.email}`);
+      localStorage.setItem("user-info", JSON.stringify(result.data));
+      this.$router.push({ name: "Home" });
+    }
+
+  } catch (error) {
+    if (error.response) {
+      if (error.response.status === 401) {
+        alert("Unauthorized: Incorrect email or password.");
+      } else {
+        alert(`Error: ${error.response.status} - ${error.response.data.message}`);
+      }
+    } else {
+      alert("Network error. Please try again later.");
+    }
+    console.error("Login Error:", error);
+  }
+},
+    
     clearForm() {
       this.email = '';
       this.password = '';
+    }
+  },
+  mounted(){
+    let user=localStorage.getItem("user-info");
+    if(user){
+      this.$router.push({name:"Home"})
     }
   }
 };

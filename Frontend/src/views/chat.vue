@@ -1,126 +1,242 @@
 <template>
+  <div class="container-fluid bg-light vh-100 d-flex flex-column">
 
-    <div class="container-fluid bg-light vh-100 d-flex flex-column">
-      
-      <nav class="navbar navbar-light bg-warning px-3 w-100">
-  
-        <div class="mt-100">
-          <img src="../assets/image.png" alt="IITM Logo" class="logo me-2" width="50" height="50"/>
-          <button class="btn btn-light border-dark ms-2" @click="reloadPage">Refresh</button>
-        </div>
-  
-        <span class="navbar-brand mb-0 h1 text-dark">Welcome to the AI Tutor, Sandeep</span>
-        
-        <router-link to="/" class="btn btn-light border-dark">Log out</router-link>
-  
-      </nav>
-      
-      <div class="row flex-grow-1">
-        <!-- Sidebar -->
-        <div class="col-3 bg-white d-flex flex-column p-3">
-          <h5 class="text-dark mb-4 text-center" style="margin-top: 20px;">Subjects</h5>
-          <div v-for="(chats, subject) in chats" :key="subject" class="mb-4">
-            <div class="d-flex justify-content-center mb-1">
-              <button 
-                class="btn w-75 text-center" 
-                :class="{'btn-danger text-white': selectedChat === subject, 'btn-warning': selectedChat !== subject}"
-                @click="joinChat(subject)"
-                style="background-color: #ffffff; color: black;">
-                {{ subject }}
+    <nav class="navbar navbar-light bg-warning px-3 w-100">
+      <div class="mt-100">
+        <img src="../assets/image.png" alt="IITM Logo" class="logo me-2" width="50" height="50" />
+        <router-link to="/course" class="btn btn-light border-dark ms-2">Back</router-link>
+      </div>
+      <span class="navbar-brand mb-0 h1 text-dark">WELCOME TO AI HELP BOT</span>
+      <button class="btn btn-light border-dark" @click="logout">Logout</button>
+    </nav>
+
+    <div class="row flex-grow-1">
+      <!-- Sidebar -->
+      <div class="col-3 bg-white d-flex flex-column p-3">
+        <h5 class="text-dark mb-4 text-center" style="margin-top: 20px;">Subjects</h5>
+
+        <div v-for="(chatList, subject) in chats" :key="subject" class="mb-4">
+          <!-- Subject Button -->
+          <div class="d-flex justify-content-center mb-1">
+            <button class="btn w-75 text-center"
+              :class="{ 'btn-danger text-white': selectedSubject === subject, 'btn-warning': selectedSubject !== subject }"
+              @click="joinChat(subject)" style="background-color: #ffffff; color: black;">
+              {{ subject }}
+            </button>
+          </div>
+
+          <!-- Chat Titles under Subject -->
+          <div v-if="selectedSubject === subject" class="chat-titles">
+            <div v-for="chat in chatList" :key="chat.chat_id" class="d-flex justify-content-center mt-1">
+              <button class="btn w-75 text-center btn-light border border-dark" @click="selectChat(chat.chat_id)">
+                {{ chat.title }}
               </button>
             </div>
           </div>
         </div>
-        
-        <!-- Chat Area -->
-        <div class="col-9 d-flex flex-column bg-light p-3 border">
-          
-          <!-- New Button Above Chat Box -->
-          <div class="d-flex justify-content-center mb-3">
-            <button 
-              class="btn btn-warning w-50 text-dark" 
-              @click="goToWeekLecture">
-              📚 Week Lectures
-            </button>
-          </div>
-  
-          <div class="flex-grow-1 border rounded p-3 bg-white">
-            <p v-if="selectedChat">Chatting in: {{ selectedChat }}</p>
-            <p v-else>Select a subject to start conversation ...</p>
+      </div>
 
-            <div v-for="(message, index) in messages" :key="index" class="mt-2">
-                
-              <p class="mb-1">{{ message }}</p>
-            </div>
+      <!-- Chat Area -->
+      <div class="col-9 d-flex flex-column bg-light p-3 border">
+        <div class="flex-grow-1 border rounded p-3 bg-white">
+          <div v-for="(message, index) in messages" :key="index" class="mt-2">
+            <p class="mb-1">{{ message }}</p>
           </div>
-
-          <div class="d-flex mt-3">
-            <input v-model="query" type="text" class="form-control border border-dark" placeholder="Enter your query here ........" @keyup.enter="askQuestion"/>
-            <button class="btn btn-warning ms-2" @click="askQuestion">Ask</button>
-          </div>
-  
         </div>
-        
+
+        <div class="d-flex mt-3">
+          <input v-model="query" type="text" class="form-control border border-dark"
+            placeholder="Enter your query here ........" @keyup.enter="askQuestion" />
+          <button class="btn btn-warning ms-2" @click="askQuestion">Ask</button>
+        </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        chats: {
-          PDSA: [],
-          Physics: [],
-          Chemistry: [],
-          Biology: []
-        },
-        selectedChat: null,
-        query: '',
-        messages: []
-      };
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+import "@/axios";
+
+export default {
+  data() {
+    return {
+      chats: { "PDSA": [] },
+      subject: "PDSA",
+      selectedSubject: null,
+      selectedChatId: null,
+      query: "",
+      messages: [],
+      user: null,
+      token: null,
+    };
+  },
+  methods: {
+    joinChat(subject) {
+      this.selectedSubject = subject;
+      this.selectedChatId = null;
+      this.messages = [];
     },
-    methods: {
-      joinChat(subject) {
-        this.selectedChat = subject;
-        this.messages = [];
-      },
-      askQuestion() {
-        if (this.query.trim()) {
-          this.messages.push(`You: ${this.query}`);
-          this.messages.push(`AI Tutor: You posted the following query -- ${this.query} --. This is a dummy response to your query.`);
-          this.query = '';
+
+    async askQuestion() {
+      let user = this.user;
+      const token = this.token;
+      if (!this.selectedChatId) {
+        try {
+          const token = JSON.parse(user)["access_token"];
+          let response = await axios.post("/chats/",{
+              subject_id: 1, title: "Chat on "+new Date().toLocaleString('en-GB', { 
+                  day: '2-digit', 
+                  month: '2-digit', 
+                  year: '2-digit', 
+                  hour: '2-digit', 
+                  minute: '2-digit', 
+                  hour12: false 
+                }).replace(/(\d+)\/(\d+)\/(\d+),\s(\d+):(\d+)/, '$2/$1/$3 at $4:$5')
+            },{ headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log(response.data)
+          if (response.status === 201) {
+            this.chats.PDSA.push(response.data.chat);
+            this.selectedChatId = response.data.chat.chat_id;
+            console.log("Chat Created:", response.data);
+          }
+        } catch (error) {
+          console.error("Error creating chat:", error);
+          alert("Failed to create chat. Please try again.");
         }
-      },
-      reloadPage() {
-        window.location.reload();
-      },
-      goToWeekLecture() {
-        this.$router.push('/week-lectures'); // Make sure this route is defined in your router
+      };
+      if (!this.query.trim()) return;
+      const userQuery = this.query;
+      this.query = "";
+      this.messages.push(`You: ${userQuery}`);
+      try {
+        let response = await axios.post("/message/send", {
+          chat_id: this.selectedChatId,
+          content: userQuery,
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.status === 200) {
+          this.messages.push(`AI Tutor: ${response.data}`);
+        }
+      } catch (error) {
+        console.error("Error sending message:", error);
+        this.messages.push("AI Tutor: Failed to send your message.");
+      }
+    },
+    
+    formatChatMessages(messages) {
+      return messages.map(msg => {
+        const prefix = msg.msg_type === 'user' ? 'You: ' : 'AI Tutor: ';
+        return `${prefix}${msg.content.trim()}`;
+      });
+    },
+
+    logout() {
+      localStorage.clear();
+      this.$router.push({ name: "HOME" })
+    },
+    async selectChat(chatId) {
+      this.selectedChatId = chatId;
+      const token = this.token;
+      try {
+
+        let response = await axios.get(`/chats/${this.selectedChatId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          }
+        })
+        console.log(response)
+        if (response.status === 200) {
+          this.messages = this.formatChatMessages(response.data.messages);
+        }
+        else {
+          console.log(response.status)
+        }
+      }
+      catch (error) {
+        console.log(error);
+      }
+
+    }
+  },
+  async mounted() {
+    let user = localStorage.getItem("user-info");
+    if (!user) {
+      this.$router.push({ name: "Login" });
+      return;
+    }
+
+    const token = JSON.parse(user)["access_token"];
+    this.user = user;
+    this.token = token;
+    try {
+      let response = await axios.get("/chats/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response.data)
+      if (response.data.length != 0) {
+        this.chats = response.data.reduce((acc, chat) => {
+          const subjectName = chat.subject.subject_name;
+          if (!acc[subjectName]) acc[subjectName] = [];
+          acc[subjectName].push(chat);
+          return acc;
+        }, {});
+      }
+      console.log("Loaded chats", this.chats);
+
+    } catch (error) {
+      if (error.response?.status === 401) {
+        alert("Session expired. Please log in again.");
+        localStorage.clear();
+        this.$router.push({ name: "Login" });
+      }
+      else {
+        alert("Unknown Error");
+        console.log(error)
       }
     }
-  };
-  </script>
-  
-  <style scoped>
-  .container-fluid {
-    height: 100vh;
-  }
-  .navbar {
-    width: 100%;
-  }
-  .btn-light:hover, .btn-primary:hover {
-    background-color: lightblue;
-  }
-  .text-center {
-    text-align: center;
-  }
-  .btn-danger {
-    background-color: #a61c00 !important;
-    border-color: #a61c00 !important;
-  }
-  .mb-4 {
-    margin-bottom: 1.5rem !important;
-  }
-  </style>
-  
+  },
+
+};
+</script>
+
+<style scoped>
+.container-fluid {
+  height: 100vh;
+}
+
+.navbar {
+  width: 100%;
+}
+
+.btn-light:hover,
+.btn-primary:hover {
+  background-color: lightblue;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.btn-danger {
+  background-color: #a61c00 !important;
+  border-color: #a61c00 !important;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+</style>

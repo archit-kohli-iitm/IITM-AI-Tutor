@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import axios from "axios"
 export default {
   data() {
     return {
@@ -64,13 +65,54 @@ export default {
     };
   },
   methods: {
-    handleSignup() {
+    async handleSignup() {
+  if (!this.email.trim() || !this.name.trim() || !this.password.trim()) {
+    alert("All fields are required. Please fill in all the details.");
+    return;
+  }
+
+  try {
+    let result = await axios.post("/auth/signup", {
+      email: this.email,
+      name: this.name,
+      password: this.password,
+    });
+
+    if (result.status === 201) {
       alert(`Signup successful for: ${this.name}`);
-    },
+      localStorage.setItem("user-info", JSON.stringify(result.data));
+      this.$router.push({ name: "Home" });
+    }
+  } catch (error) {
+    if (error.response) {
+      // Backend responded with an error status
+      if (error.response.status === 400) {
+        
+        alert("Email already registered. Please use a different email.");
+      } else if (error.response.status === 409) {
+        alert("Invalid data. Please check your input.");
+      } else {
+        alert(`Signup failed: ${error.response.data.message || "Unknown error"}`);
+      }
+    } else if (error.request) {
+      alert("Network error. Please check your connection.");
+    } else {
+      alert("An unexpected error occurred. Please try again.");
+    }
+  }
+}
+
+,
     clearForm() {
       this.email = '';
       this.name = '';
       this.password = '';
+    }
+  },
+  mounted(){
+    let user=localStorage.getItem("user-info");
+    if(user){
+      this.$router.push({name:"Home"})
     }
   }
 };

@@ -1,11 +1,13 @@
 from google import genai
+from google.genai import types
 from qdrant_client import QdrantClient, models
 from fastembed import TextEmbedding, SparseTextEmbedding
-from application.prompt import SYSTEM_PROMPT, GUARDRAIL_PROMPT
+from application.prompt import *
 from application.constants import *
 import json
 from pydantic import BaseModel
 import re
+import httpx
 
 class ContextRetriever():
     dense_model_name = "models/text-embedding-004"
@@ -46,81 +48,190 @@ class ContextRetriever():
 
         return results
 
-class RAGModel():
-    def __init__(self, gemini_model_name:str, gemini_api_key:str, qdrant_collection_name:str, qdrant_client_url:str, qdrant_api_key:str):
-        self.genai_client = genai.Client(api_key=gemini_api_key)
-        self.model_name = gemini_model_name
-        self.retriever = ContextRetriever(qdrant_collection_name, qdrant_client_url, gemini_api_key, qdrant_api_key)
 
-    def _get_context(self, query:str):
-        points = self.retriever.retrieve(query).points
-        result = []
-        for point in points:
-            result.append(point.payload)
-        return result
+
+class PromptBuilder:
+    @staticmethod
+    def build_system_prompt(query: str, chat_history: str, context: str) -> str:
+        return SYSTEM_PROMPT.format(chat_history=chat_history, input_query=query, context=context)
     
-    def stream(self, query:str, chat_history:str=None):
-        guardrail_prompt = GUARDRAIL_PROMPT.format(query=query)
-        
-        # Handle guardrail check
-        response = self.genai_client.models.generate_content(
-            model=self.model_name,
-            contents=guardrail_prompt,
-            config=genai.types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema={"type": "object", "properties": {"category": {"type": "string"}}}
+    @staticmethod
+    def build_summarization_prompt(chat_history: str) -> str:
+        return SUMMARIZATION_PROMPT.format(chat_history=chat_history)
+    
+    @staticmethod
+    def build_classifier_prompt(query: str, chat_history: str) -> str:
+        return CLASSIFIER_PROMPT.format(query=query, chat_history=chat_history)
+    
+    @staticmethod
+    def build_assignment_prompt(query: str, assgn_type: str, chat_history:str) -> str:
+        if assgn_type == "PRACTICE":
+            return PRACTICE_ASSIGNMENT_PROMPT.format(query=query, chat_history=chat_history)
+        else:
+            return GRADED_ASSIGNMENT_PROMPT.format(query=query, chat_history=chat_history)
+
+class Utils:
+    @staticmethod
+    def jsonify(s: str):
+        s = re.sub(r"```(?:json)?", "", s, flags=re.IGNORECASE).strip()
+
+        match = re.search(r'(\{.*\}|\[.*\])', s, flags=re.DOTALL)
+        if not match:
+            raise ValueError("No valid JSON object or array found in the string.")
+
+        json_str = match.group(1)
+        return json.loads(json_str)
+    
+    @staticmethod
+    def extractWeek(w: int):
+        return week2assgn["Week "+str(w)]
+
+class QueryClassifier:
+    def __init__(self, client, model_name):
+        self.client = client
+        self.model_name = model_name
+
+    def classify(self, query: str, chat_history:str) -> str:
+        prompt = PromptBuilder.build_classifier_prompt(query, chat_history)
+        try:
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt
             )
-        )
-        
-        category = response.parsed.get("category", None)
+            response = Utils.jsonify(response.text)
+            return response
+        except Exception as e:
+            print("Error in classify", e)
+            return {"guardrail_category":"ERROR"}
+            
 
-        if category != "VALID":
-            def rejection_response():
-                if category == "UNETHICAL":
-                    yield UNETHICAL_RESPONSE, None
-                elif category == "INVALID":
-                    yield INVALID_RESPONSE, None
-                else:
-                    yield ERROR_RESPONSE, None
-            return rejection_response()
+class ResponseGenerator:
+    def __init__(self, client, model_name):
+        self.client = client
+        self.model_name = model_name
 
-        context_documents = self._get_context(query)
-        context = "\n\n".join([doc["content"] for doc in context_documents])
-        formatted_prompt = SYSTEM_PROMPT.format(chat_history=chat_history, input_query=query, context=context)
-        
-        # Stream response
-        stream = self.genai_client.models.generate_content_stream(
+    def rejection_generator(self, category: str):
+        def generator():
+            if category == "UNETHICAL":
+                yield UNETHICAL_RESPONSE, None
+            elif category == "INVALID":
+                yield INVALID_RESPONSE, None
+            elif category == "NOT_FOUND":
+                yield NOT_FOUND_RESPONSE, None
+            else:
+                yield ERROR_RESPONSE, None
+        return generator()
+
+    def _load_pdf_parts(self, pdf_sources):
+        parts = []
+        for src in pdf_sources or []:
+            try:
+                file_id = src.split("/file/d/")[1].split("/")[0]
+                src = f"https://drive.usercontent.google.com/download?id={file_id}&export=download"
+
+                response = httpx.get(src)
+                response.raise_for_status()
+                parts.append(types.Part.from_bytes(
+                        data=response._content,
+                        mime_type='application/pdf',
+                    )
+                )
+            except Exception as e:
+                print(f"Error loading PDF from {src}: {e}")
+        return parts
+
+    def _build_content(self, prompt: str, context: str = None, pdf_sources=None):
+        parts = self._load_pdf_parts(pdf_sources)
+
+        if context:
+            parts.append(f"\n\nContext:\n{context}")
+        parts.append(prompt)
+        return parts
+
+    def stream_response(self, prompt: str, context: str = None, pdf_paths=None):
+        contents = self._build_content(prompt, context, pdf_paths)
+        stream = self.client.models.generate_content_stream(
             model=self.model_name,
-            contents=formatted_prompt
+            contents=contents
         )
-        
-        def response_generator():
+
+        def generator():
             full_response = []
             try:
                 for chunk in stream:
                     chunk_text = chunk.text
                     full_response.append(chunk_text)
-                    yield chunk_text, None  # Streaming chunk
-                
-                # Final yield with complete response and context
-                yield ''.join(full_response), context
+                    yield chunk_text, None
             except Exception as e:
                 print(f"Streaming error: {e}")
                 yield ERROR_RESPONSE, None
-                
-        return response_generator()
-    
-    def _get_history(self, *args, **kwargs):
-        pass
-    
-    def __call__(self, query:str, chat_history:str=None):
-        context_documents = self._get_context(query)
-        context = "\n\n".join([doc["content"] for doc in context_documents])
-        formatted_prompt = SYSTEM_PROMPT.format(chat_history=chat_history, input_query=query, context=context)
+
+        return generator()
+
+    def get_response(self, prompt: str, context: str = None, pdf_paths=None):
+        contents = self._build_content(prompt, context, pdf_paths)
+        try:
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=contents
+            )
+            return response.text
+        except Exception as e:
+            print(f"Response error: {e}")
+            return ERROR_RESPONSE
+
+
+class RAGModel:
+    def __init__(self, gemini_model_name: str, gemini_api_key: str,
+                 qdrant_collection_name: str, qdrant_client_url: str, qdrant_api_key: str):
+        self.model_name = gemini_model_name
+        self.genai_client = genai.Client(api_key=gemini_api_key)
+
+        self.retriever = ContextRetriever(qdrant_collection_name, qdrant_client_url,
+                                          gemini_api_key, qdrant_api_key)
+        self.classifier = QueryClassifier(self.genai_client, self.model_name)
+        self.generator = ResponseGenerator(self.genai_client, self.model_name)
+
+    def _get_context_string(self, query: str) -> str:
+        context_documents = self.retriever.retrieve(query).points
+        return "\n\n".join([doc.payload["content"] for doc in context_documents])
+
+    def _get_context_source(self, query: str) -> tuple[str, str]:
+        week = int(self.retriever.retrieve(query,1).points[0].payload["metadata"]["week"])
+        if week%2 == 0:
+            assgn_type = "GRADED"
+        else:
+            assgn_type = "PRACTICE"
+        source_path = Utils.extractWeek(week)
+        return source_path, assgn_type
+
+    def stream(self, query: str, chat_history: str = None):
+        category = self.classifier.classify(query, chat_history)
+
+        if category["guardrail_category"] not in ["VALID","UNETHICAL"] :
+            return self.generator.rejection_generator(category["guardrail_category"])
         
-        response = self.genai_client.models.generate_content(
-            model=self.model_name,
-            contents=formatted_prompt
-        )
-        
-        return response.text, context
+        if category["guardrail_category"] == "UNETHICAL":
+            source, assgn_type = self._get_context_source(query)
+            prompt = PromptBuilder.build_assignment_prompt(query, assgn_type, chat_history)
+            return self.generator.stream_response(prompt=prompt, pdf_paths=[source])
+        else:
+            if category["category"] == "SUMMARIZATION":
+                try:
+                    pdf_path = week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]
+                except Exception as e:
+                    return self.generator.rejection_generator("NOT_FOUND")
+                prompt = PromptBuilder.build_summarization_prompt(chat_history)
+                return self.generator.stream_response(prompt=prompt,pdf_paths=[pdf_path])
+            
+            else:
+                context = self._get_context_string(query)
+                prompt = PromptBuilder.build_system_prompt(query, chat_history, context)
+                return self.generator.stream_response(prompt=prompt, context=context)
+
+    def __call__(self, query: str, chat_history: str = None):
+        context = self._get_context_string(query)
+        prompt = PromptBuilder.build_system_prompt(query, chat_history, context)
+        response = self.generator.get_response(prompt)
+        return response, context
+

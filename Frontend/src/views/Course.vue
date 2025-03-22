@@ -3,9 +3,12 @@
     <nav class="navbar navbar-light bg-warning px-3 w-100 d-flex justify-content-between">
       <div class="d-flex align-items-center">
         <img src="../assets/image.png" alt="IITM Logo" class="logo me-2" width="50" height="50"/>
-        <span class="navbar-brand mb-0 h1 text-dark">Jan 2025 - Deep Learning</span>
+        <router-link to="/home" class="btn btn-light border-dark ms-2">Back</router-link>
+        
+       
       </div>
-      <button class="btn btn-light border-dark" @click="reloadPage">Refresh</button>
+      <span class="navbar-brand mb-0 h1 text-dark">Jan 2025 - Deep Learning</span>
+      <button class="btn btn-light border-dark" @click="logout">Logout</button>
     </nav>
 
     <div class="row flex-grow-1">
@@ -84,6 +87,18 @@ export default {
     },
     reloadPage() {
       window.location.reload();
+    },
+    logout(){
+      localStorage.clear();
+      this.$router.push({name:"HOME"})
+    }
+  },
+  mounted(){
+    let user=localStorage.getItem("user-info");
+    console.log(`here`)
+    console.log(user)
+    if(!user){
+      this.$router.push({name:"Login"})
     }
   }
 };
