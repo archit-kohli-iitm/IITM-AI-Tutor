@@ -42,7 +42,7 @@
             <br>
           
             <div class="d-flex justify-content-center gap-5">
-              <button type="submit" class="btn btn-warning w-25  border border-dark"v-on:click="handleSignup">Sign up</button>
+              <button type="submit" class="btn btn-warning w-25  border border-dark">Sign up</button>
               <button type="button" class="btn btn-secondary w-25 border border-dark" @click="clearForm">Clear</button>
             </div>
             
@@ -81,7 +81,7 @@ export default {
     if (result.status === 201) {
       alert(`Signup successful for: ${this.name}`);
       localStorage.setItem("user-info", JSON.stringify(result.data));
-      this.$router.push({ name: "Login" });
+      this.$router.push({ name: "Home" });
     }
   } catch (error) {
     if (error.response) {
