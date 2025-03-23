@@ -56,8 +56,8 @@ class PromptBuilder:
         return SYSTEM_PROMPT.format(chat_history=chat_history, input_query=query, context=context)
     
     @staticmethod
-    def build_summarization_prompt(chat_history: str) -> str:
-        return SUMMARIZATION_PROMPT.format(chat_history=chat_history)
+    def build_summarization_prompt(query:str, chat_history: str) -> str:
+        return SUMMARIZATION_PROMPT.format(query=query,chat_history=chat_history)
     
     @staticmethod
     def build_classifier_prompt(query: str, chat_history: str) -> str:
@@ -222,7 +222,7 @@ class RAGModel:
             elif category["category"] == "SUMMARIZATION":
                 try:
                     pdf_path = week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]
-                    prompt = PromptBuilder.build_summarization_prompt(chat_history)
+                    prompt = PromptBuilder.build_summarization_prompt(query=query,chat_history=chat_history)
                     return self.generator.stream_response(prompt=prompt,pdf_paths=[pdf_path])
                 except Exception as e:
                     return self.generator.rejection_generator("NOT_FOUND")
