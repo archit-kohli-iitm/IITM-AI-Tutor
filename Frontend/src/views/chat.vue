@@ -4,7 +4,7 @@
     <nav class="navbar navbar-light bg-warning px-3 w-100">
       <div class="mt-100">
         <img src="../assets/image.png" alt="IITM Logo" class="logo me-2" width="50" height="50" />
-        <router-link to="/course" class="btn btn-light border-dark ms-2">Back</router-link>
+        <router-link :to="`/course?subject=${subjectName}&id=${subjectId}`" class="btn btn-light border-dark ms-2">Back</router-link>
       </div>
       <span class="navbar-brand mb-0 h1 text-dark">AI Tutor for {{ subjectName }}</span>
       <button class="btn btn-light border-dark" @click="logout">Logout</button>
@@ -13,16 +13,7 @@
     <div class="row flex-grow-1">
       <!-- Sidebar -->
       <div class="col-3 bg-white d-flex flex-column p-3">
-        <div v-for="(chatList, subject) in chats" :key="subject" class="mb-4">
-      
-        <!-- Subject Button
-        <div class="d-flex justify-content-center mb-1">
-          <button class="btn w-75 text-center"
-            :class="{ 'btn-danger text-white': selectedSubject === subject, 'btn-warning': selectedSubject !== subject }"
-            @click="joinChat(subject)" style="background-color: #ffffff; color: black;">
-            {{ subject }}
-          </button>
-        </div> -->
+        <div class="mb-4">
 
         <!-- New Chat Button -->
         <div class="d-flex justify-content-center mb-2">
@@ -87,9 +78,7 @@ import { marked } from 'marked'; // for markdown
 export default {
   data() {
     return {
-      chats: { "PDSA": [] },
-      subject: "PDSA",
-      selectedSubject: null,
+      chatList: [],
       selectedChatId: null,
       query: "",
       messages: [],
@@ -99,18 +88,13 @@ export default {
     };
   },
   methods: {
-    joinChat(subject) {
-      this.selectedSubject = subject;
-      this.selectedChatId = null;
-      this.messages = [];
-    },
     async createChat(subject) {
       let user = this.user;
       const token = this.token;
       try {
         const token = JSON.parse(user)["access_token"];
         let response = await axios.post("/chats/",{
-            subject_id: 1, title: "Chat on "+new Date().toLocaleString('en-GB', { 
+            subject_id: this.subjectId, title: "Chat on "+new Date().toLocaleString('en-GB', { 
                 day: '2-digit', 
                 month: '2-digit', 
                 year: '2-digit', 
@@ -126,7 +110,7 @@ export default {
         );
         console.log(response.data)
         if (response.status === 201) {
-          this.chats.PDSA.push(response.data.chat);
+          this.chatList.push(response.data.chat);
           this.messages = [];
           await this.selectChat(response.data.chat.chat_id);
           console.log("Chat Created:", response.data);
@@ -144,7 +128,7 @@ export default {
         try {
           const token = JSON.parse(user)["access_token"];
           let response = await axios.post("/chats/",{
-              subject_id: 1, title: "Chat on "+new Date().toLocaleString('en-GB', { 
+              subject_id: this.subjectId, title: "Chat on "+new Date().toLocaleString('en-GB', { 
               day: '2-digit',
               month: '2-digit',
               year: '2-digit',
@@ -160,7 +144,7 @@ export default {
           );
           console.log(response.data)
           if (response.status === 201) {
-            this.chats.PDSA.push(response.data.chat);
+            this.chatList.push(response.data.chat);
             this.selectedChatId = response.data.chat.chat_id;
             console.log("Chat Created:", response.data);
           }
@@ -253,22 +237,18 @@ export default {
     async deleteChat(chat_id) {
         try {
           // Ensure the selected subject exists in the chats object
-          if (!this.chats[this.subject]) {
-            console.error(`No chats found for subject: ${this.subject}`);
+          if (!this.chatList) {
+            console.error(`No chats found for subject: ${this.subjectName}`);
             return;
           }
-          const updatedSubjectChats = this.chats[this.subject].filter(chat => chat.chat_id !== chat_id);
-          this.chats = {
-            ...this.chats,
-            [this.subject]: updatedSubjectChats,
-          };
+          this.chatList = this.chatList.filter(chat => chat.chat_id !== chat_id);
           if (chat_id == this.selectedChatId){
             this.messages = [];
-            if (this.chats[this.subject].length <= 0){
+            if (this.chatList.length <= 0){
               this.selectedChatId = null;
             }
             else{
-              let newChatId = this.chats[this.subject][this.chats[this.subject].length - 1].chat_id;
+              let newChatId = this.chatList[this.chatList.length - 1].chat_id;
               await this.selectChat(newChatId);
             }
           }
@@ -281,7 +261,7 @@ export default {
 
           // If the chat is successfully deleted, remove it from the correct subject's chat list
           if (response.status === 200) {
-            // this.chats[this.subject] = this.chats[this.subject].filter(chat => chat.chat_id !== chat_id);
+            // this.chatList = this.chatList.filter(chat => chat.chat_id !== chat_id);
             console.log(`Chat with ID ${chat_id} deleted successfully.`);
             // Refresh the page to reflect changes
             // window.location.reload();
@@ -312,24 +292,24 @@ export default {
           "Content-Type": "application/json",
         },
       });
-      console.log(response.data)
       if (response.data.length != 0) {
-        this.chats = response.data.reduce((acc, chat) => {
-          const subjectName = chat.subject.subject_name;
-          if (!acc[subjectName]) acc[subjectName] = [];
-          acc[subjectName].push(chat);
-          return acc;
-        }, {});
+        const chatList = [];
+        for (let chat of response.data){
+          if (chat.subject.subject_id == this.subjectId){
+            chatList.push(chat);
+          }
+        }
+        this.chatList = chatList;
       }
-      if (this.chats[this.subject].length <= 0){
+      if (!this.chatList || this.chatList.length <= 0){
         this.selectedChatId = null;
         this.messages = [];
       }
       else{
-        let newChatId = this.chats[this.subject][this.chats[this.subject].length - 1].chat_id;
+        let newChatId = this.chatList[this.chatList.length - 1].chat_id;
         await this.selectChat(newChatId);
       }
-      console.log("Loaded chats", this.chats);
+      console.log("Loaded chats", this.chatList);
 
     } catch (error) {
       if (error.response?.status === 401) {
@@ -345,7 +325,10 @@ export default {
   },
   computed: {
     subjectName() {
-      return this.$route.query.subject || "Default Subject";
+      return this.$route.query.subject || "PDSA";
+    },
+    subjectId() {
+      return parseInt(this.$route.query.id) || 1;
     }
   },
   watch: {
