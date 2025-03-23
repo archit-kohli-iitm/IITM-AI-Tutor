@@ -64,8 +64,8 @@ class PromptBuilder:
         return CLASSIFIER_PROMPT.format(query=query, chat_history=chat_history)
     
     @staticmethod
-    def build_assignment_prompt(query: str, assgn_type: str, chat_history:str) -> str:
-        if assgn_type == "PRACTICE":
+    def build_assignment_prompt(query: str, week: str, chat_history:str) -> str:
+        if int(week)%2 == 0:
             return PRACTICE_ASSIGNMENT_PROMPT.format(query=query, chat_history=chat_history)
         else:
             return GRADED_ASSIGNMENT_PROMPT.format(query=query, chat_history=chat_history)
@@ -112,9 +112,7 @@ class ResponseGenerator:
 
     def rejection_generator(self, category: str):
         def generator():
-            if category == "UNETHICAL":
-                yield UNETHICAL_RESPONSE, None
-            elif category == "INVALID":
+            if category == "INVALID":
                 yield INVALID_RESPONSE, None
             elif category == "NOT_FOUND":
                 yield NOT_FOUND_RESPONSE, None
@@ -196,38 +194,59 @@ class RAGModel:
         context_documents = self.retriever.retrieve(query).points
         return "\n\n".join([doc.payload["content"] for doc in context_documents])
 
-    def _get_context_source(self, query: str) -> tuple[str, str]:
-        week = int(self.retriever.retrieve(query,1).points[0].payload["metadata"]["week"])
-        if week%2 == 0:
-            assgn_type = "GRADED"
-        else:
-            assgn_type = "PRACTICE"
-        source_path = Utils.extractWeek(week)
-        return source_path, assgn_type
+    # def _get_context_source(self, query: str) -> tuple[str, str]:
+    #     week = int(self.retriever.retrieve(query,1).points[0].payload["metadata"]["week"])
+    #     if week%2 == 0:
+    #         assgn_type = "GRADED"
+    #     else:
+    #         assgn_type = "PRACTICE"
+    #     source_path = Utils.extractWeek(week)
+    #     return source_path, assgn_type
 
     def stream(self, query: str, chat_history: str = None):
         category = self.classifier.classify(query, chat_history)
+        print(category)
 
-        if category["guardrail_category"] not in ["VALID","UNETHICAL"] :
-            return self.generator.rejection_generator(category["guardrail_category"])
+        if category["guardrail_category"] == "INVALID" :
+            return self.generator.rejection_generator("INVALID")
         
-        if category["guardrail_category"] == "UNETHICAL":
-            source, assgn_type = self._get_context_source(query)
-            prompt = PromptBuilder.build_assignment_prompt(query, assgn_type, chat_history)
-            return self.generator.stream_response(prompt=prompt, pdf_paths=[source])
-        else:
-            if category["category"] == "SUMMARIZATION":
+        elif category["guardrail_category"] == "VALID":
+            if category["category"] == "ASSIGNMENT":
                 try:
-                    pdf_path = week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]
+                    pdf_path = week2assgn["Week "+str(category["week"])]
+                    prompt = PromptBuilder.build_assignment_prompt(query, category["week"], chat_history)
+                    return self.generator.stream_response(prompt=prompt, pdf_paths=[pdf_path])
                 except Exception as e:
                     return self.generator.rejection_generator("NOT_FOUND")
-                prompt = PromptBuilder.build_summarization_prompt(chat_history)
-                return self.generator.stream_response(prompt=prompt,pdf_paths=[pdf_path])
+            
+            elif category["category"] == "SUMMARIZATION":
+                try:
+                    pdf_path = week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]
+                    prompt = PromptBuilder.build_summarization_prompt(chat_history)
+                    return self.generator.stream_response(prompt=prompt,pdf_paths=[pdf_path])
+                except Exception as e:
+                    return self.generator.rejection_generator("NOT_FOUND")
             
             else:
-                context = self._get_context_string(query)
+                try:
+                    if "week" in category and category["week"] is not None and category["week"].isnumeric():
+                        if "lecture" in category and category["lecture"] is not None and category["lecture"].isnumeric():
+                            pdf_paths = [week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]]
+                        else:
+                            pdf_paths = list(week2pdf["Week "+str(category["week"])].values())
+                    else:
+                        pdf_paths = None
+                except Exception as e:
+                    return self.generator.rejection_generator("NOT_FOUND")
+                if pdf_paths is None and ("context_needed" not in category or category["context_needed"] == "TRUE"):
+                    context = self._get_context_string(query)
+                else:
+                    context = None
+                print(context)
                 prompt = PromptBuilder.build_system_prompt(query, chat_history, context)
-                return self.generator.stream_response(prompt=prompt, context=context)
+                return self.generator.stream_response(prompt=prompt, context=context, pdf_paths=pdf_paths)
+        else:
+            return self.generator.rejection_generator("ERROR")
 
     def __call__(self, query: str, chat_history: str = None):
         context = self._get_context_string(query)
