@@ -6,33 +6,32 @@
         <img src="../assets/image.png" alt="IITM Logo" class="logo me-2" width="50" height="50" />
         <router-link to="/course" class="btn btn-light border-dark ms-2">Back</router-link>
       </div>
-      <span class="navbar-brand mb-0 h1 text-dark">WELCOME TO AI HELP BOT</span>
+      <span class="navbar-brand mb-0 h1 text-dark">AI Tutor for {{ subjectName }}</span>
       <button class="btn btn-light border-dark" @click="logout">Logout</button>
     </nav>
 
     <div class="row flex-grow-1">
       <!-- Sidebar -->
       <div class="col-3 bg-white d-flex flex-column p-3">
-        <h5 class="text-dark mb-4 text-center" style="margin-top: 20px;">Subjects</h5>
-
         <div v-for="(chatList, subject) in chats" :key="subject" class="mb-4">
           <!-- Subject Button -->
-          <div class="d-flex justify-content-center mb-1">
+          <!-- <div class="d-flex justify-content-center mb-1">
             <button class="btn w-75 text-center"
               :class="{ 'btn-danger text-white': selectedSubject === subject, 'btn-warning': selectedSubject !== subject }"
               @click="joinChat(subject)" style="background-color: #ffffff; color: black;">
               {{ subject }}
             </button>
-          </div>
+          </div> -->
 
           <!-- Chat Titles under Subject -->
-          <div v-if="selectedSubject === subject" class="chat-titles">
-            <div v-for="chat in chatList" :key="chat.chat_id" class="d-flex justify-content-center mt-1">
-              <button class="btn w-75 text-center btn-light border border-dark" @click="selectChat(chat.chat_id)">
+            <div v-for="chat in chatList" :key="chat.chat_id" class="d-flex justify-content-center mt-1" style="padding-bottom: 10px;">
+              <button 
+                class="btn w-100 text-center border border-dark"
+                :class="{ 'btn-warning': selectedChatId === chat.chat_id, 'btn-light': selectedChatId !== chat.chat_id }"
+                @click="selectChat(chat.chat_id)">
                 {{ chat.title }}
               </button>
             </div>
-          </div>
         </div>
       </div>
 
@@ -40,7 +39,7 @@
       <div class="col-9 d-flex flex-column bg-light p-3 border">
         <div class="flex-grow-1 border rounded p-3 bg-white">
           <div v-for="(message, index) in messages" :key="index" class="mt-2">
-            <p class="mb-1">{{ message }}</p>
+            <p class="mb-1" v-html="renderMarkdown(message)"></p>
           </div>
         </div>
 
@@ -57,6 +56,8 @@
 <script>
 import axios from "axios";
 import "@/axios";
+
+import { marked } from 'marked'; // for markdown
 
 export default {
   data() {
@@ -166,7 +167,9 @@ export default {
       catch (error) {
         console.log(error);
       }
-
+    },
+    renderMarkdown(text) {
+      return marked(text); // Convert Markdown to HTML
     }
   },
   async mounted() {
@@ -209,7 +212,16 @@ export default {
       }
     }
   },
-
+  computed: {
+    subjectName() {
+      return this.$route.query.subject || "Default Subject";
+    }
+  },
+  watch: {
+    "$route.query.subject"(newVal) {
+      console.log("Subject changed to:", newVal);
+    }
+  }
 };
 </script>
 
