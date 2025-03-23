@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import { RouterLink, RouterView } from 'vue-router'
+import 'font-awesome/css/font-awesome.min.css';
 
 </script>
 
