@@ -111,7 +111,6 @@ week2pdf = {
 
 week2assgn = {
     "Week 1": "https://drive.google.com/file/d/1spNLcnflFrWCM7vrUdCcHrnKT040FsjL/view?usp=drive_link",
-    "Week 2": "https://drive.google.com/file/d/1-Q-Wd7dIlgCQPnCq4YXWHeFbAX3UoK4A/view?usp=drive_link",
     "Week 3": "https://drive.google.com/file/d/1NMYJdN37pWneG-5qevgpJhZy2MQlWh82/view?usp=drive_link",
     "Week 4": "https://drive.google.com/file/d/1wxPIbLQEokdfqn1tvog7CWIH0XW836Bv/view?usp=drive_link",
     "Week 5": "https://drive.google.com/file/d/1P-IHNhwMYrVVYk2GR3FQVEJwiHflNy7d/view?usp=drive_link",
