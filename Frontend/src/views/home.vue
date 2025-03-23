@@ -14,7 +14,7 @@
         <router-link
           v-for="(details, subject) in chats"
           :key="subject"
-          :to="{ path: '/course', query: { subject: subject } }"
+          :to="{ path: '/course', query: { subject: subject, id: details.id } }"
           class="card-link"
           
         >
@@ -48,6 +48,7 @@ export default {
     return {
       chats: {
         "PDSA": {
+          id: 1,
           repeat: false,
           assignments: {
             "Week 1": 80,
@@ -58,9 +59,10 @@ export default {
             "Week 6": 100,
             "Week 7": 100,
           },
-          allowed: true,
+          allowed: true
         },
         "Software Engineering": {
+          id: 2,
           repeat: false,
           assignments: {
             "Week 1": 93,
@@ -70,9 +72,10 @@ export default {
             "Week 5": 92,
             "Week 7": 80,
           },
-          allowed: true,
+          allowed: true
         },
         "AI: Search Methods for Problem Solving": {
+          id: 3,
           repeat: false,
           assignments: {
             "Week 1": 90,
@@ -83,7 +86,7 @@ export default {
             "Week 6": 17,
             "Week 7": "Absent",
           },
-          allowed: true,
+          allowed: true
         },
       },
     };

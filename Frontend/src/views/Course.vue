@@ -22,7 +22,7 @@
           <img src="../assets/sidebar-grades-selected.svg" alt="Grades" width="40" height="40"/>
           <span>Grades</span>
         </div>
-        <router-link :to="`/Ai_Bot?subject=${subjectName}`" class="sidebar-item text-white text-decoration-none">
+        <router-link :to="`/Ai_Bot?subject=${subjectName}&id=${subjectId}`" class="sidebar-item text-white text-decoration-none">
           <img src="../assets/4505323.png" alt="AI Bot" width="40" height="40"/>
           <span>AI Bot</span>
         </router-link>
@@ -103,7 +103,10 @@ export default {
   },
   computed: {
     subjectName() {
-      return this.$route.query.subject || "Default Subject";
+      return this.$route.query.subject || "PDSA";
+    },
+    subjectId() {
+      return parseInt(this.$route.query.id) || 1;
     }
   },
   watch: {
