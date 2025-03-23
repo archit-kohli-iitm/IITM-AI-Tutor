@@ -5,7 +5,7 @@
         <img src="../assets/image.png" alt="IITM Logo" class="logo me-2" width="50" height="50"/>
         
       </div>
-      <span class="navbar-brand mb-0 h1 text-dark">Welcome to the AI Tutor, Sandeep</span>
+      <span class="navbar-brand mb-0 h1 text-dark">Welcome to the AI Tutor</span>
       <button class="btn btn-light border-dark" @click="logout">Logout</button>
     </nav>
 
@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       chats: {
-        "Deep Learning": {
+        "PDSA": {
           repeat: false,
           assignments: {
             "Week 1": 80,
