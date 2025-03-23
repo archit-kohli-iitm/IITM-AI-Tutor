@@ -7,7 +7,7 @@
         
        
       </div>
-      <span class="navbar-brand mb-0 h1 text-dark">Jan 2025 - Deep Learning</span>
+      <span class="navbar-brand mb-0 h1 text-dark">Jan 2025 - {{ subjectName }}</span>
       <button class="btn btn-light border-dark" @click="logout">Logout</button>
     </nav>
 
@@ -22,7 +22,7 @@
           <img src="../assets/sidebar-grades-selected.svg" alt="Grades" width="40" height="40"/>
           <span>Grades</span>
         </div>
-        <router-link to="/Ai_Bot" class="sidebar-item text-white text-decoration-none">
+        <router-link :to="`/Ai_Bot?subject=${subjectName}`" class="sidebar-item text-white text-decoration-none">
           <img src="../assets/4505323.png" alt="AI Bot" width="40" height="40"/>
           <span>AI Bot</span>
         </router-link>
@@ -99,6 +99,16 @@ export default {
     console.log(user)
     if(!user){
       this.$router.push({name:"Login"})
+    }
+  },
+  computed: {
+    subjectName() {
+      return this.$route.query.subject || "Default Subject";
+    }
+  },
+  watch: {
+    "$route.query.subject"(newVal) {
+      console.log("Subject changed to:", newVal);
     }
   }
 };
