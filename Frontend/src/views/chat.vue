@@ -53,22 +53,19 @@
       
       <!-- Chat Area -->
       <div class="col-9 d-flex flex-column bg-light p-3 border">
-       
-       <!-- Set a fixed height and make it scrollable -->
-       <div class="flex-grow-1 border rounded p-3 bg-white chat-container">
-         <div v-for="(message, index) in messages" :key="index" class="mt-2">
-           <!-- msg bg -->
-           <p class="mb-1" v-html="renderMarkdown(message)" :class="message.startsWith('You:') ? 'you-message' : 'ai-tutor-message'"></p>
-         </div>
-       </div>
-     
-       <div class="d-flex mt-3">
-         <input v-model="query" type="text" class="form-control border border-dark"
-           placeholder="Enter your query here ........" @keyup.enter="askQuestion" />
-         <button class="btn btn-warning ms-2" @click="askQuestion">Ask</button>
-       </div>
-     
-     </div>
+        <!-- Set a fixed height and make it scrollable -->
+        <div ref="chatContainer" class="flex-grow-1 border rounded p-3 bg-white chat-container">
+          <div v-for="(message, index) in messages" :key="index" class="mt-2">
+            <!-- msg bg -->
+            <p class="mb-1" v-html="renderMarkdown(message)" :class="message.startsWith('You:') ? 'you-message' : 'ai-tutor-message'"></p>
+          </div>
+        </div>
+
+        <div class="d-flex mt-3">
+          <input v-model="query" type="text" class="form-control border border-dark" placeholder="Enter your query here ........" @keyup.enter="askQuestion" />
+          <button class="btn btn-warning ms-2" @click="askQuestion">Ask</button>
+        </div>
+      </div>
      
     </div>
   </div>
@@ -92,10 +89,14 @@ export default {
       baseUrl: axios.defaults.baseURL
     };
   },
+  
   methods: {
+
     async createChat(subject) {
+    
       let user = this.user;
       const token = this.token;
+    
       try {
         const token = JSON.parse(user)["access_token"];
         let response = await axios.post("/chats/",{
@@ -127,8 +128,10 @@ export default {
     },
 
     async askQuestion() {
+
       let user = this.user;
       const token = this.token;
+      
       if (!this.selectedChatId) {
         try {
           const token = JSON.parse(user)["access_token"];
@@ -158,10 +161,12 @@ export default {
           alert("Failed to create chat. Please try again.");
         }
       };
+      
       if (!this.query.trim()) return;
       const userQuery = this.query;
       this.query = "";
       this.messages.push(`You: ${userQuery}`);
+      
       try {
         const response = await fetch(`${this.baseUrl}/message/send`, {
           method: 'POST',
@@ -232,6 +237,7 @@ export default {
         console.log(error);
       }
     },
+
     renderMarkdown(text) {
       if (text.startsWith("AI Tutor: ")) {
         const aiResponse = text.slice(10); // Remove "AI Tutor: " prefix
@@ -241,6 +247,12 @@ export default {
         return marked("**You:**" + userQuery); // Convert Markdown to HTML
       }
     },
+
+    scrollToBottom() {
+      const chatContainer = this.$refs.chatContainer;
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    },
+
     async deleteChat(chat_id) {
         try {
           // Ensure the selected subject exists in the chats object
@@ -282,6 +294,12 @@ export default {
         }
       },
   },
+  
+  updated() {
+    // Scroll to the bottom after messages are updated
+    this.scrollToBottom();
+  },
+
   async mounted() {
     let user = localStorage.getItem("user-info");
     if (!user) {
@@ -330,6 +348,7 @@ export default {
       }
     }
   },
+  
   computed: {
     subjectName() {
       return this.$route.query.subject || "PDSA";
@@ -397,7 +416,7 @@ export default {
   padding-left: 15px; /* Adds padding to the left */
   padding-right: 15px; /* Adds padding to the right */
   padding-top: 5px; /* Adds padding to the left */
-  padding-bottom: 5px; /* Adds padding to the right */
+  padding-bottom: 0px; /* Adds padding to the right */
   border-radius: 7px; /* Increase the value to make the corners more rounded */
 }
 
@@ -408,7 +427,7 @@ export default {
   padding-left: 15px; /* Adds padding to the left */
   padding-right: 15px; /* Adds padding to the right */
   padding-top: 5px; /* Adds padding to the left */
-  padding-bottom: 5px; /* Adds padding to the right */
+  padding-bottom: 0px; /* Adds padding to the right */
   border-radius: 7px; /* Increase the value to make the corners more rounded */
 }
 
