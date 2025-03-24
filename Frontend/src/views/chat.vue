@@ -59,6 +59,9 @@
             <!-- msg bg -->
             <p class="mb-1" v-html="renderMarkdown(message)" :class="message.startsWith('You:') ? 'you-message' : 'ai-tutor-message'"></p>
           </div>
+          <p v-if="loading" class="text-muted fw-medium mx-2 loading-pulse">
+            {{ loadingText }}
+          </p>
         </div>
 
         <div class="d-flex mt-3">
@@ -86,11 +89,34 @@ export default {
       messages: [],
       user: null,
       token: null,
-      baseUrl: axios.defaults.baseURL
+      baseUrl: axios.defaults.baseURL,
+      loading: false,
+      loadingText: "Fetching context...",
+      loadingInterval: null,
     };
   },
   
   methods: {
+    startLoadingText() {
+      const phrases = [
+        "Fetching context...",
+        "Viewing lectures...",
+        "Preparing notes...",
+        "Organizing insights...",
+        "Summarizing key points..."
+      ];
+      let index = 0;
+      this.loadingText = phrases[index];
+      this.loadingInterval = setInterval(() => {
+        index = (index + 1) % phrases.length;
+        this.loadingText = phrases[index];
+      }, 3000);
+    },
+
+    stopLoadingText() {
+      clearInterval(this.loadingInterval);
+      this.loadingInterval = null;
+    },
 
     async createChat(subject) {
     
@@ -131,7 +157,10 @@ export default {
 
       let user = this.user;
       const token = this.token;
-      
+      let showLoaderTimeout = setTimeout(() => {
+        this.loading = true;
+        this.startLoadingText();
+      }, 6000);
       if (!this.selectedChatId) {
         try {
           const token = JSON.parse(user)["access_token"];
@@ -181,18 +210,22 @@ export default {
         });
 
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        clearTimeout(showLoaderTimeout);
+        if (this.loading) {
+          this.loading = false;
+          this.stopLoadingText();
+        }
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let aiResponse = "AI Tutor: ";
-
+        
         // Add initial empty response
         this.messages.push(aiResponse);
-
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-
+          
           aiResponse += decoder.decode(value);
           // Update last message with accumulated response
           this.messages.splice(-1, 1, aiResponse);
@@ -200,6 +233,12 @@ export default {
       } catch (error) {
         console.error("Error sending message:", error);
         this.messages.push("AI Tutor: Failed to send your message.");
+      } finally{
+        clearTimeout(showLoaderTimeout);
+        if (this.loading) {
+          this.loading = false;
+          this.stopLoadingText();
+        }
       }
     },
 
@@ -449,4 +488,16 @@ p {
   margin-top: auto; /* Pushes the input field to the bottom of the chat container */
 }
 
+.loading-pulse {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
 </style>
