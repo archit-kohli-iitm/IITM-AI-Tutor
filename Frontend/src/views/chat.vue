@@ -53,18 +53,23 @@
       
       <!-- Chat Area -->
       <div class="col-9 d-flex flex-column bg-light p-3 border">
-        <div class="flex-grow-1 border rounded p-3 bg-white">
-          <div v-for="(message, index) in messages" :key="index" class="mt-2">
-            <p class="mb-1" v-html="renderMarkdown(message)"></p>
-          </div>
-        </div>
-
-        <div class="d-flex mt-3">
-          <input v-model="query" type="text" class="form-control border border-dark"
-            placeholder="Enter your query here ........" @keyup.enter="askQuestion" />
-          <button class="btn btn-warning ms-2" @click="askQuestion">Ask</button>
-        </div>
-      </div>
+       
+       <!-- Set a fixed height and make it scrollable -->
+       <div class="flex-grow-1 border rounded p-3 bg-white chat-container">
+         <div v-for="(message, index) in messages" :key="index" class="mt-2">
+           <!-- msg bg -->
+           <p class="mb-1" v-html="renderMarkdown(message)" :class="message.startsWith('You:') ? 'you-message' : 'ai-tutor-message'"></p>
+         </div>
+       </div>
+     
+       <div class="d-flex mt-3">
+         <input v-model="query" type="text" class="form-control border border-dark"
+           placeholder="Enter your query here ........" @keyup.enter="askQuestion" />
+         <button class="btn btn-warning ms-2" @click="askQuestion">Ask</button>
+       </div>
+     
+     </div>
+     
     </div>
   </div>
 </template>
@@ -230,9 +235,11 @@ export default {
     renderMarkdown(text) {
       if (text.startsWith("AI Tutor: ")) {
         const aiResponse = text.slice(10); // Remove "AI Tutor: " prefix
-        return "AI Tutor: " + marked(aiResponse);
+        return marked("**AI Tutor:** " + aiResponse);
+      } else { 
+        const userQuery = text.slice(4); // Remove "AI Tutor: " prefix
+        return marked("**You:**" + userQuery); // Convert Markdown to HTML
       }
-      return marked(text); // Convert Markdown to HTML
     },
     async deleteChat(chat_id) {
         try {
@@ -369,4 +376,58 @@ export default {
 .hover-icon:hover {
   background-color: lightblue; /* Light gray background on hover */
 }
+
+.message-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message {
+  border-radius: 8px;
+  padding: 10px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.you-message {
+  background-color: rgb(241, 237, 237); /* Light blue background for "You" messages */
+  border: 1px solid black; /* Blue border for "You" */
+  align-self: flex-start;  /* Align "You" messages to the left */
+  padding-left: 15px; /* Adds padding to the left */
+  padding-right: 15px; /* Adds padding to the right */
+  padding-top: 5px; /* Adds padding to the left */
+  padding-bottom: 5px; /* Adds padding to the right */
+  border-radius: 7px; /* Increase the value to make the corners more rounded */
+}
+
+.ai-tutor-message {
+  background-color: white; /* Light green background for AI Tutor messages */
+  border: 1px solid black; /* Green border for AI Tutor */
+  align-self: flex-end;  /* Align AI messages to the right */
+  padding-left: 15px; /* Adds padding to the left */
+  padding-right: 15px; /* Adds padding to the right */
+  padding-top: 5px; /* Adds padding to the left */
+  padding-bottom: 5px; /* Adds padding to the right */
+  border-radius: 7px; /* Increase the value to make the corners more rounded */
+}
+
+p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* chat container */
+
+/* Ensure the chat container has a fixed height and scrolling */
+.chat-container {
+  height: 70vh; /* or any value you prefer, or max-height: 500px */
+  overflow-y: auto; /* Enable scrolling when content exceeds the height */
+}
+
+/* Optional: Make the input container fixed if you'd like it to always be visible */
+.d-flex.mt-3 {
+  margin-top: auto; /* Pushes the input field to the bottom of the chat container */
+}
+
 </style>
