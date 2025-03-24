@@ -8,6 +8,7 @@ import json
 from pydantic import BaseModel
 import re
 import httpx
+from fuzzywuzzy import process
 
 class ContextRetriever():
     dense_model_name = "models/text-embedding-004"
@@ -27,7 +28,7 @@ class ContextRetriever():
         )
         return response.embeddings[0].values
 
-    def retrieve(self, query, num_documents=10):
+    def retrieve(self, query, num_documents=5):
         dense_query_vector = self.embed_query(query)
         prefetch = [
             models.Prefetch(
@@ -140,7 +141,6 @@ class ResponseGenerator:
 
     def _build_content(self, prompt: str, context: str = None, pdf_sources=None):
         parts = self._load_pdf_parts(pdf_sources)
-
         if context:
             parts.append(f"\n\nContext:\n{context}")
         parts.append(prompt)
@@ -164,7 +164,13 @@ class ResponseGenerator:
                 print(f"Streaming error: {e}")
                 yield ERROR_RESPONSE, None
 
+            # Add sources after the stream ends
+            if pdf_paths:
+                sources_text = "\n\n##### Sources:\n" + "\n".join(f"- {path}" for path in set(pdf_paths))
+                yield sources_text, None
+
         return generator()
+
 
     def get_response(self, prompt: str, context: str = None, pdf_paths=None):
         contents = self._build_content(prompt, context, pdf_paths)
@@ -190,9 +196,16 @@ class RAGModel:
         self.classifier = QueryClassifier(self.genai_client, self.model_name)
         self.generator = ResponseGenerator(self.genai_client, self.model_name)
 
-    def _get_context_string(self, query: str) -> str:
+    def _get_context_string(self, query: str) -> tuple[list,str]:
         context_documents = self.retriever.retrieve(query).points
-        return "\n\n".join([doc.payload["content"] for doc in context_documents])
+        sources = list(set(doc.payload["source"] for doc in context_documents))
+        pdf_paths = []
+        for src in sources:
+            title = process.extractOne(src, title2lecture.keys())[0]
+            if title is not None:
+                week, lec = title2lecture[title]
+                pdf_paths.append(week2pdf[week][lec]["Transcript"])
+        return pdf_paths, "\n\n".join([doc.payload["content"] for doc in context_documents])
 
     # def _get_context_source(self, query: str) -> tuple[str, str]:
     #     week = int(self.retriever.retrieve(query,1).points[0].payload["metadata"]["week"])
@@ -217,32 +230,44 @@ class RAGModel:
                     prompt = PromptBuilder.build_assignment_prompt(query, category["week"], chat_history)
                     return self.generator.stream_response(prompt=prompt, pdf_paths=[pdf_path])
                 except Exception as e:
+                    print(e)
                     return self.generator.rejection_generator("NOT_FOUND")
             
             elif category["category"] == "SUMMARIZATION":
                 try:
-                    pdf_path = week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]
+                    if "week" in category and category["week"] is not None and category["week"].isnumeric():
+                        if "lecture" in category and category["lecture"] is not None and category["lecture"].isnumeric():
+                            pdf_paths = [week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]["Transcript"]]
+                        else:
+                            pdf_paths = [week2pdf["Week "+str(category["week"])][lecture]["Transcript"] for lecture in week2pdf["Week "+str(category["week"])]]
+                    else:
+                        pdf_paths = None
                     prompt = PromptBuilder.build_summarization_prompt(query=query,chat_history=chat_history)
-                    return self.generator.stream_response(prompt=prompt,pdf_paths=[pdf_path])
+                    return self.generator.stream_response(prompt=prompt,pdf_paths=pdf_paths)
                 except Exception as e:
+                    print(e)
                     return self.generator.rejection_generator("NOT_FOUND")
             
             else:
                 try:
                     if "week" in category and category["week"] is not None and category["week"].isnumeric():
                         if "lecture" in category and category["lecture"] is not None and category["lecture"].isnumeric():
-                            pdf_paths = [week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]]
+                            pdf_paths = [week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]["Transcript"]]
                         else:
-                            pdf_paths = list(week2pdf["Week "+str(category["week"])].values())
+                            pdf_paths = [week2pdf["Week "+str(category["week"])][lecture]["Transcript"] for lecture in week2pdf["Week "+str(category["week"])]]
                     else:
                         pdf_paths = None
                 except Exception as e:
+                    print(e)
                     return self.generator.rejection_generator("NOT_FOUND")
-                if pdf_paths is None and ("context_needed" not in category or category["context_needed"] == "TRUE"):
-                    context = self._get_context_string(query)
+                if pdf_paths is None and ("what_context_needed" not in category or category["what_context_needed"] != "NO CONTEXT NEEDED"):
+                    if "what_context_needed" not in category:
+                        pdf_paths, context = self._get_context_string(query)
+                    else:
+                        pdf_paths, context = self._get_context_string(category["what_context_needed"])
                 else:
                     context = None
-                print(context)
+                print(context, pdf_paths)
                 prompt = PromptBuilder.build_system_prompt(query, chat_history, context)
                 return self.generator.stream_response(prompt=prompt, context=context, pdf_paths=pdf_paths)
         else:
