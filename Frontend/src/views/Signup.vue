@@ -1,21 +1,23 @@
 <template>
+
   <div>
     <nav class="navbar navbar-expand-lg navbar-light bg-warning">
-        <div class="container-fluid d-flex justify-content-between">
-          <div>
-          <img src="../assets/image.png" alt="IITM Logo" class="logo me-2 w-5" width="50" height="50"/>
-          <router-link to="/" class="btn btn-light border-dark ms-2">Home</router-link>
-          </div>
-          <span class="navbar-brand mb-0 h1 text-dark">AI Tutor Application</span>
-        
-          <router-link to="/login" class="btn btn-light border-dark">Log in</router-link>
+      <div class="container-fluid d-flex justify-content-between">
+
+        <div>
+        <img src="../assets/image.png" alt="IITM Logo" class="logo me-2 w-5" width="50" height="50"/>
+        <router-link to="/" class="btn btn-light border-dark ms-2">Home</router-link>
         </div>
-      </nav>
+
+        <span class="navbar-brand mb-0 h1 text-dark">AI Tutor Application</span>
+      
+        <router-link to="/login" class="btn btn-light border-dark">Log in</router-link>
+
+      </div>
+    </nav>
     
     <div class="d-flex align-items-center justify-content-center min-vh-100 bg-light" style="margin-top: -30px;">
-      
       <div class="card shadow-lg p-4 border border-dark" style="max-width: 500px; width: 100%;">
-        
         <div class="card-body text-center">
           
           <h2 class="mb-3">Please sign up</h2>
@@ -55,68 +57,73 @@
 </template>
 
 <script>
-import axios from "axios"
-export default {
-  data() {
-    return {
-      email: '',
-      name: '',
-      password: ''
-    };
-  },
-  methods: {
-    async handleSignup() {
-  if (!this.email.trim() || !this.name.trim() || !this.password.trim()) {
-    alert("All fields are required. Please fill in all the details.");
-    return;
-  }
 
-  try {
-    let result = await axios.post("/auth/signup", {
-      email: this.email,
-      name: this.name,
-      password: this.password,
-    });
+  import axios from "axios"
+  
+  export default {
+    
+    data() {
+      return {
+        email: '',
+        name: '',
+        password: ''
+      };
+    },
+    
+    methods: {
+      
+      async handleSignup() {
+          
+          if (!this.email.trim() || !this.name.trim() || !this.password.trim()) {
+            alert("ERROR: All fields are required. Please fill in all the details.");
+            return;
+          }
 
-    if (result.status === 201) {
-      alert(`Signup successful for: ${this.name}`);
-      localStorage.setItem("user-info", JSON.stringify(result.data));
-      this.$router.push({ name: "Home" });
-    }
-  } catch (error) {
-    if (error.response) {
-      // Backend responded with an error status
-      if (error.response.status === 400) {
-        
-        alert("Email already registered. Please use a different email.");
-      } else if (error.response.status === 409) {
-        alert("Invalid data. Please check your input.");
-      } else {
-        alert(`Signup failed: ${error.response.data.message || "Unknown error"}`);
+          try {
+            let result = await axios.post("/auth/signup", {
+              email: this.email,
+              name: this.name,
+              password: this.password,
+            });
+
+            if (result.status === 201) {
+              localStorage.setItem("user-info", JSON.stringify(result.data));
+              this.$router.push({ name: "Home" });
+            }
+          } catch (error) {
+            if (error.response) {
+              if (error.response.status === 400) {
+                alert("ERROR: Email id is already registered. Please use a different email id.");
+              } else if (error.response.status === 409) {
+                alert("ERROR: Invalid data. Please check your input.");
+              } else {
+                alert(`ERROR: Signup failed. ${error.response.data.message || "ERROR: An unknown error occurred. Please try again."}`);
+              }
+            } else if (error.request) {
+              alert("NETWORK ERROR: Please check your connection.");
+            } else {
+              alert("ERROR: An unexpected error occurred. Please try again.");
+            }
+          }
+      },
+
+      clearForm() {
+          
+          this.email = '';
+          this.name = '';
+          this.password = '';
+      },
+    },
+
+    mounted() {
+      
+      let user=localStorage.getItem("user-info");
+      
+      if(user) {
+        this.$router.push({name:"Home"})
       }
-    } else if (error.request) {
-      alert("Network error. Please check your connection.");
-    } else {
-      alert("An unexpected error occurred. Please try again.");
-    }
-  }
-}
+    },
 
-,
-    clearForm() {
-      this.email = '';
-      this.name = '';
-      this.password = '';
-    }
-  },
-  mounted(){
-    let user=localStorage.getItem("user-info");
-    if(user){
-      this.$router.push({name:"Home"})
-    }
-  }
-};
+  };
+  
 </script>
-
-<style scoped>
-</style>
