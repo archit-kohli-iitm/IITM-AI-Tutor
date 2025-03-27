@@ -13,6 +13,7 @@ from application.auth import *
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 import os
+import logging
 
 load_dotenv()
 
@@ -28,6 +29,17 @@ os.environ.setdefault('FORKED_BY_MULTIPROCESSING', '1')
 def create_app(config_class=DevConfig):    
     myapp = Flask(__name__)
     myapp.config.from_object(config_class)
+
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,  # Use DEBUG for more detailed logs
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.StreamHandler(),  # Logs to stdout (Render captures this)
+        ],
+    )
+
+    logger = logging.getLogger(__name__)
 
     api = Api(myapp,validate=True)
     
@@ -59,9 +71,9 @@ def create_app(config_class=DevConfig):
     api.add_namespace(chat_ns,'/chats')
     api.add_namespace(message_ns,'/message')
     
-    return myapp,api
+    return myapp,api,logger
 
-myapp,api = create_app()
+myapp,api,logger = create_app()
 
 # run the app
 if __name__ == '__main__':

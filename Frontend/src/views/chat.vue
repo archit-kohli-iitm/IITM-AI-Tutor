@@ -278,13 +278,30 @@ export default {
     },
 
     renderMarkdown(text) {
+      let processedText;
+
       if (text.startsWith("AI Tutor: ")) {
-        const aiResponse = text.slice(10); // Remove "AI Tutor: " prefix
-        return marked("**AI Tutor:** " + aiResponse);
-      } else { 
-        const userQuery = text.slice(4); // Remove "AI Tutor: " prefix
-        return marked("**You:**" + userQuery); // Convert Markdown to HTML
+        const aiResponse = text.slice(10);
+        processedText = marked("**AI Tutor:** " + aiResponse);
+      } else {
+        const userQuery = text.slice(4);
+        processedText = marked("**You:** " + userQuery);
       }
+
+      // Delay math rendering until it's added to the DOM
+      this.$nextTick(() => {
+        if (window.renderMathInElement) {
+          const container = this.$refs.chatContainer;
+          renderMathInElement(container, {
+            delimiters: [
+              {left: "$$", right: "$$", display: true},
+              {left: "$", right: "$", display: false}
+            ]
+          });
+        }
+      });
+
+      return processedText;
     },
 
     scrollToBottom() {
