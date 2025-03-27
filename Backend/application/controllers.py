@@ -11,6 +11,8 @@ from application.models import Subject, mydb, User, Chat, Message
 from application.constants import *
 from application.utils import *
 
+import logging
+logger = logging.getLogger(__name__)
 
 start_time = time.time()
 
@@ -387,7 +389,7 @@ class MessageResource(Resource):
                     mydb.session.commit()
 
                 except Exception as e:
-                    print("Error inside generate response",e)
+                    logger.info("Error inside generate response",e)
                     mydb.session.rollback()
                     yield ERROR_RESPONSE
                     

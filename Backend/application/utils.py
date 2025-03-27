@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 import os
 import time
 
+import logging
+logger = logging.getLogger(__name__)
+
 load_dotenv()
 
 SOURCE_DIRECTORY = os.environ.get("SOURCE_DIRECTORY")
@@ -20,7 +23,7 @@ def retry(func):
             try:
                 return func(*args, **kwargs)
             except Exception as e:
-                print(f"Error occurred: {e}")
+                logger.info(f"Error occurred: {e}")
                 time.sleep(1)
         return None
     return wrapper
@@ -56,7 +59,7 @@ def getContextHistory(messages,ctx_limit=None):
 @retry
 def getQueryResponse(query, messages):
     chat_history = getChatHistory(messages, msg_limit=None)
-    print("Chat History\n", chat_history)
+    logger.info(f"Chat History\n {chat_history}")
     
     agent = getAgent()
     response_generator = agent.stream(query, chat_history=chat_history)

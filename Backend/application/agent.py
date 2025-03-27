@@ -10,6 +10,9 @@ import re
 import httpx
 from fuzzywuzzy import process
 
+import logging
+logger = logging.getLogger(__name__)
+
 class ContextRetriever():
     dense_model_name = "models/text-embedding-004"
 
@@ -102,7 +105,7 @@ class QueryClassifier:
             response = Utils.jsonify(response.text)
             return response
         except Exception as e:
-            print("Error in classify", e)
+            logger.info("Error in classify" + str(e))
             return {"guardrail_category":"ERROR"}
             
 
@@ -136,7 +139,7 @@ class ResponseGenerator:
                     )
                 )
             except Exception as e:
-                print(f"Error loading PDF from {src}: {e}")
+                logger.info(f"Error loading PDF from {src}: {e}")
         return parts
 
     def _build_content(self, prompt: str, context: str = None, pdf_sources=None):
@@ -161,7 +164,7 @@ class ResponseGenerator:
                     full_response.append(chunk_text)
                     yield chunk_text, None
             except Exception as e:
-                print(f"Streaming error: {e}")
+                logger.info(f"Streaming error: {e}")
                 yield ERROR_RESPONSE, None
 
             # Add sources after the stream ends
@@ -181,7 +184,7 @@ class ResponseGenerator:
             )
             return response.text
         except Exception as e:
-            print(f"Response error: {e}")
+            logger.info(f"Response error: {e}")
             return ERROR_RESPONSE
 
 
@@ -218,7 +221,7 @@ class RAGModel:
 
     def stream(self, query: str, chat_history: str = None):
         category = self.classifier.classify(query, chat_history)
-        print(category)
+        logger.info(category)
 
         if category["guardrail_category"] == "INVALID" :
             return self.generator.rejection_generator("INVALID")
@@ -230,7 +233,7 @@ class RAGModel:
                     prompt = PromptBuilder.build_assignment_prompt(query, category["week"], chat_history)
                     return self.generator.stream_response(prompt=prompt, pdf_paths=[pdf_path])
                 except Exception as e:
-                    print(e)
+                    logger.info(e)
                     return self.generator.rejection_generator("NOT_FOUND")
             
             elif category["category"] == "SUMMARIZATION":
@@ -245,7 +248,7 @@ class RAGModel:
                     prompt = PromptBuilder.build_summarization_prompt(query=query,chat_history=chat_history)
                     return self.generator.stream_response(prompt=prompt,pdf_paths=pdf_paths)
                 except Exception as e:
-                    print(e)
+                    logger.info(e)
                     return self.generator.rejection_generator("NOT_FOUND")
             
             else:
@@ -258,7 +261,7 @@ class RAGModel:
                     else:
                         pdf_paths = None
                 except Exception as e:
-                    print(e)
+                    logger.info(e)
                     return self.generator.rejection_generator("NOT_FOUND")
                 if pdf_paths is None and ("what_context_needed" not in category or category["what_context_needed"] != "NO CONTEXT NEEDED"):
                     if "what_context_needed" not in category:
@@ -267,7 +270,7 @@ class RAGModel:
                         pdf_paths, context = self._get_context_string(category["what_context_needed"])
                 else:
                     context = None
-                print(context, pdf_paths)
+                logger.info(f"{context} {pdf_paths}")
                 prompt = PromptBuilder.build_system_prompt(query, chat_history, context)
                 return self.generator.stream_response(prompt=prompt, context=context, pdf_paths=pdf_paths)
         else:
