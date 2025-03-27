@@ -59,7 +59,7 @@ def getContextHistory(messages,ctx_limit=None):
 @retry
 def getQueryResponse(query, messages):
     chat_history = getChatHistory(messages, msg_limit=None)
-    logger.info(f"Chat History\n {chat_history}")
+    logger.info(f"User Query: {query}")
     
     agent = getAgent()
     response_generator = agent.stream(query, chat_history=chat_history)
