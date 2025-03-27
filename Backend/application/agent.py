@@ -149,7 +149,7 @@ class ResponseGenerator:
         parts.append(prompt)
         return parts
 
-    def stream_response(self, prompt: str, context: str = None, pdf_paths=None):
+    def stream_response(self, prompt: str, context: str = None, pdf_paths=None, source_links=None):
         contents = self._build_content(prompt, context, pdf_paths)
         stream = self.client.models.generate_content_stream(
             model=self.model_name,
@@ -168,8 +168,8 @@ class ResponseGenerator:
                 yield ERROR_RESPONSE, None
 
             # Add sources after the stream ends
-            if pdf_paths:
-                sources_text = "\n\n##### Sources:\n" + "\n".join(f"- {path}" for path in set(pdf_paths))
+            if source_links:
+                sources_text = "\n\n##### Sources:\n" + "\n".join(f"- [{name}]({path})" for path,name in set(source_links))
                 yield sources_text, None
 
         return generator()
@@ -199,16 +199,18 @@ class RAGModel:
         self.classifier = QueryClassifier(self.genai_client, self.model_name)
         self.generator = ResponseGenerator(self.genai_client, self.model_name)
 
-    def _get_context_string(self, query: str) -> tuple[list,str]:
+    def _get_context_string(self, query: str) -> tuple[list,list,str]:
         context_documents = self.retriever.retrieve(query).points
         sources = list(set(doc.payload["source"] for doc in context_documents))
         pdf_paths = []
+        source_links = []
         for src in sources:
             title = process.extractOne(src, title2lecture.keys())[0]
             if title is not None:
                 week, lec = title2lecture[title]
                 pdf_paths.append(week2pdf[week][lec]["Transcript"])
-        return pdf_paths, "\n\n".join([doc.payload["content"] for doc in context_documents])
+                source_links.append((week2pdf[week][lec]["Video"],week2pdf[week][lec]["Title"]))
+        return pdf_paths, source_links, "\n\n".join([doc.payload["content"] for doc in context_documents])
 
     # def _get_context_source(self, query: str) -> tuple[str, str]:
     #     week = int(self.retriever.retrieve(query,1).points[0].payload["metadata"]["week"])
@@ -241,12 +243,15 @@ class RAGModel:
                     if "week" in category and category["week"] is not None and category["week"].isnumeric():
                         if "lecture" in category and category["lecture"] is not None and category["lecture"].isnumeric():
                             pdf_paths = [week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]["Transcript"]]
+                            source_links = [(week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]["Video"],week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]["Title"])]
                         else:
                             pdf_paths = [week2pdf["Week "+str(category["week"])][lecture]["Transcript"] for lecture in week2pdf["Week "+str(category["week"])]]
+                            source_links = [(week2pdf["Week "+str(category["week"])][lecture]["Video"],week2pdf["Week "+str(category["week"])][lecture]["Title"]) for lecture in week2pdf["Week "+str(category["week"])]]
                     else:
                         pdf_paths = None
+                        source_links = None
                     prompt = PromptBuilder.build_summarization_prompt(query=query,chat_history=chat_history)
-                    return self.generator.stream_response(prompt=prompt,pdf_paths=pdf_paths)
+                    return self.generator.stream_response(prompt=prompt,pdf_paths=pdf_paths, source_links=source_links)
                 except Exception as e:
                     logger.info(e)
                     return self.generator.rejection_generator("NOT_FOUND")
@@ -256,23 +261,26 @@ class RAGModel:
                     if "week" in category and category["week"] is not None and category["week"].isnumeric():
                         if "lecture" in category and category["lecture"] is not None and category["lecture"].isnumeric():
                             pdf_paths = [week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]["Transcript"]]
+                            source_links = [(week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]["Video"],week2pdf["Week "+str(category["week"])]["Lecture "+str(category["lecture"])]["Title"])]
                         else:
                             pdf_paths = [week2pdf["Week "+str(category["week"])][lecture]["Transcript"] for lecture in week2pdf["Week "+str(category["week"])]]
+                            source_links = [(week2pdf["Week "+str(category["week"])][lecture]["Video"],week2pdf["Week "+str(category["week"])][lecture]["Title"]) for lecture in week2pdf["Week "+str(category["week"])]]
                     else:
                         pdf_paths = None
+                        source_links = None
                 except Exception as e:
                     logger.info(e)
                     return self.generator.rejection_generator("NOT_FOUND")
                 if pdf_paths is None and ("what_context_needed" not in category or category["what_context_needed"] != "NO CONTEXT NEEDED"):
                     if "what_context_needed" not in category:
-                        pdf_paths, context = self._get_context_string(query)
+                        pdf_paths, source_links, context = self._get_context_string(query)
                     else:
-                        pdf_paths, context = self._get_context_string(category["what_context_needed"])
+                        pdf_paths, source_links, context = self._get_context_string(category["what_context_needed"])
                 else:
                     context = None
                 logger.info(f"{context} {pdf_paths}")
                 prompt = PromptBuilder.build_system_prompt(query, chat_history, context)
-                return self.generator.stream_response(prompt=prompt, context=context, pdf_paths=pdf_paths)
+                return self.generator.stream_response(prompt=prompt, context=context, pdf_paths=pdf_paths, source_links=source_links)
         else:
             return self.generator.rejection_generator("ERROR")
 

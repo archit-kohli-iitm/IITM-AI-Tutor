@@ -5,402 +5,442 @@
             "Video": "https://youtu.be/G-XixYjFNnA",
             "Title": "Lecture 1.1 - Introduction to Jupyter notebooks and Google Colab.pdf"
         },
+        "Lecture 2": {
+            "Transcript": "https://drive.google.com/file/d/1QlWZW59nPWkOqsBhrl9wCV7fwzCrhFHv/view?usp=drive_link",
+            "Video": "https://youtu.be/PVwttQzr7nY",
+            "Title": "L1.2: Implementation of Python codes (Part 1)"
+        },
         "Lecture 3": {
             "Transcript": "https://drive.google.com/file/d/11nT5_Va9N13ElblFYRyx1yG85USEOuRL/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/2W3BKOSg958",
+            "Title": "L1.3: Python recap - I"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1DSJX8_ih23leowf98o6e0uWupy3BjXC8/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/q9rS_GFCtQg",
+            "Title": "L1.4: Python recap - II"
         },
         "Lecture 5": {
             "Transcript": "https://drive.google.com/file/d/1ddMCV_sr1HoX0SAW-BiqdJPzGu7Hjuqf/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/PBnhRTf00Z0",
+            "Title": "L1.5: Python recap - III"
         },
         "Lecture 6": {
             "Transcript": "https://drive.google.com/file/d/1yTAjbJbmqqKGd8eLUOKY6Q2A4Kf2X6yc/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/XkHIWFlryv8",
+            "Title": "L1.6: Exception handling"
         },
         "Lecture 7": {
             "Transcript": "https://drive.google.com/file/d/1JIprTOzfDBK1qB7pQEoIHgJJicHi1syl/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/oHZNBBUlD-0",
+            "Title": "L1.7: Classes and Objects"
+        },
+        "Lecture 8": {
+            "Transcript": "https://drive.google.com/file/d/1kBaiahg_gseQWZ-G8Or9OiPgBOBp-NMi/view?usp=drive_link",
+            "Video": "https://youtu.be/xbLF2bckqok",
+            "Title": "L1.8: Implementation of Python codes (Part 2)"
         },
         "Lecture 9": {
             "Transcript": "https://drive.google.com/file/d/1gM0YZ-7HEh-TwuzezLVKS2icDGsmo2r2/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/x5uLvXbpcMY",
+            "Title": "L1.9: Timing our code"
+        },
+        "Lecture 10": {
+            "Transcript": "https://drive.google.com/file/d/1cQyJ8p7efLpW693I5r3dYdo5efcCn4x3/view?usp=drive_link",
+            "Video": "https://youtu.be/wz_oE0Z9kr8",
+            "Title": "L1.10: Implementation of Python codes (Part 3)"
         },
         "Lecture 11": {
-            "Transcript": "https://drive.google.com/file/d/15rn79s4HgjlCBQJ6S-U-Qn2Uz2XB9IYV/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Transcript": "https://drive.google.com/file/d/1y0WgsYLbzgfPQ0N1x9ly8gjIMJZidPeL/view?usp=drive_link",
+            "Video": "https://youtu.be/0B3niErBMto",
+            "Title": "L1.11: Why efficiency matters?"
+        },
+        "Lecture 12": {
+            "Transcript": "https://drive.google.com/file/d/11Hkf1v5ANJxW2x5WXeh1jdGA_M2t8XQV/view?usp=drive_link",
+            "Video": "https://youtu.be/jixpXGLjpNQ",
+            "Title": "L1.12: Implementation of Python codes (Part 4)"
         }
     },
     "Week 2": {
         "Lecture 1": {
             "Transcript": "https://drive.google.com/file/d/1J6AKtCBZMRLUyvaTzQ9GKUaT3vAnjKUt/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/jixpXGLjpNQ",
+            "Title": "L1.12: Implementation of Python codes (Part 4)"
         },
         "Lecture 2": {
             "Transcript": "https://drive.google.com/file/d/1oFmRVPUBk3l1bH3tl_bwK_T3NFr5N-Lo/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/YviduWBizB0",
+            "Title": "L2.2: Comparing Orders of Magnitude"
         },
         "Lecture 3": {
             "Transcript": "https://drive.google.com/file/d/19VaALYW9Pa8JCAPl9KsSOPWZaK_7uB2o/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/L1SPxZvjpoM",
+            "Title": "L2.3: Calculating Complexity"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1UC1YLKXSWI8zL5gk_f-oW-4r6p5ejdsn/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/nLHPNN_d85I",
+            "Title": "L2.4: Searching in a List"
         },
         "Lecture 5": {
             "Transcript": "https://drive.google.com/file/d/1ntmwBgm4LKLKfqjS3iYKLqk5ivGZ4zSZ/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/PzLW39b12Cc",
+            "Title": "L2.5: Selection Sort"
         },
         "Lecture 6": {
             "Transcript": "https://drive.google.com/file/d/1kTHITmG26RLn0ume8nkJCJzx6m_uBKZg/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/NEWwLaeFols",
+            "Title": "L2.6: Inserting Sort"
         },
         "Lecture 7": {
             "Transcript": "https://drive.google.com/file/d/1rB07GgMdXq8XZOs79eihjMztGtyLKsrp/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/HBF0FNPJQeA",
+            "Title": "L2.7: Merge Sort"
         },
         "Lecture 8": {
             "Transcript": "https://drive.google.com/file/d/1K8-wgKevfDLiBxMLfwHWquaKFgemYkO-/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/YdjNwrRxOII",
+            "Title": "L2.8: Analysis of Merge Sort"
+        },
+        "Lecture 9": {
+            "Transcript": "https://drive.google.com/file/d/1Wx1iYDVQgHgRMfKdLIZCpFIk3qEbgw6a/view?usp=drive_link",
+            "Video": "https://youtu.be/kl-RyxDJGM8",
+            "Title": "L2.9: Implementation of Searching and Sorting algorithms"
         }
     },
     "Week 3": {
         "Lecture 1": {
             "Transcript": "https://drive.google.com/file/d/1inbuUKAUv-G5d9Q5gz1Pffwbqvx0nG4i/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/4w2N6ON79Y4",
+            "Title": "L3.1: Quicksort"
         },
         "Lecture 2": {
             "Transcript": "https://drive.google.com/file/d/1jDu6CLvpxe6CRh0MqSv2-O9Vc_TY5oZx/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/Pf85r6Xzf4g",
+            "Title": "L3.2: Analysis of Quicksort"
+        },
+        "Lecture 3": {
+            "Transcript": "https://drive.google.com/file/d/1kco2jgT4w2oBN2AbyUeHZYJuObz8ysR5/view?usp=drive_link",
+            "Video": "https://youtu.be/rqYRw5XAmGI",
+            "Title": "L3.3: Implementation of Quicksort algorithm"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1kInbwmh_7eQlDYrS7xbPv2XbABTCsj52/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/bWRLxhD44gw",
+            "Title": "L3.4: Concluding remarks on sorting algorithms"
         },
         "Lecture 5": {
             "Transcript": "https://drive.google.com/file/d/1ruvikYEH-0KuGKXXFhOdgqUKHTH6dHkt/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/fbXzNtoEsVg",
+            "Title": "L3.5: Difference between Lists and Arrays (Theory)"
         },
         "Lecture 6": {
             "Transcript": "https://drive.google.com/file/d/1vjT3HpzzCuDoftX_sHdsl1kCLB1Sxuik/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/AsE30JMsM14",
+            "Title": "L3.6: Designing a Flexible List and Operations on the same"
         },
         "Lecture 7": {
             "Transcript": "https://drive.google.com/file/d/1Wbjv3Rgud-jGlS7QVxoCdgDGPjLWXoVT/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/QHKuZRaeKZE",
+            "Title": "L3.7: Implementation of Lists in Python"
         },
         "Lecture 8": {
             "Transcript": "https://drive.google.com/file/d/1_rk8Owci2Ti_NGLvycfFRAIFVj6wu7SS/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/leiBMoWxmqI",
+            "Title": "L3.8: Implementation of Dictionaries in Python"
+        },
+        "Lecture 9": {
+            "Transcript": "https://drive.google.com/file/d/1U3GVnItc47eSmSLvLlAi2d9NIivVBSVI/view?usp=drive_link",
+            "Video": "https://youtu.be/ZPjSeqQjpAQ",
+            "Title": "L3.9: Difference between Lists and Arrays (Implementation)"
         }
     },
     "Week 4": {
         "Lecture 1": {
             "Transcript": "https://drive.google.com/file/d/1q6M7z5DManZksMNTNLjgNb4EOXBWh8oh/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/Z9akqu1KiXk",
+            "Title": "L4.1: Introduction to graphs"
         },
         "Lecture 2": {
             "Transcript": "https://drive.google.com/file/d/1yHYGxVg5IKWf4M71nwI3TIsEOhTYzx67/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/_5czfD3Bzlw",
+            "Title": "L4.2: Representing Graphs"
         },
         "Lecture 3": {
             "Transcript": "https://drive.google.com/file/d/14bxM5USgELILY-pjkoQfDNahU_PM_55U/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/ULrHm2nsV8A",
+            "Title": "L4.3: Breadth First Search (BFS)"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1-t6JeUqpwsbeRDgFT04dWorfEpCPQ72f/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/A7TFa4u3Db8",
+            "Title": "L4.4: Depth First Search (DFS)"
         },
         "Lecture 5": {
             "Transcript": "https://drive.google.com/file/d/1N5rQvYKzINpnbIoyCVzvGkJ7Sl4dmHvw/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/RDA1nGsEVLY",
+            "Title": "L4.5: Applications of BFS and DFS"
         },
         "Lecture 6": {
             "Transcript": "https://drive.google.com/file/d/1QeYTesM5Op6UZJ8yfXNgR3xuTtUMc_Tb/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/om9baDPpWNE",
+            "Title": "L4.6: Introduction to Directed Acyclic Graph (DAG)"
         },
         "Lecture 7": {
             "Transcript": "https://drive.google.com/file/d/1j6Fuc9uUFdb_pJSmxz3wptcU4ESgwzTe/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/xkNBIO4Qorg",
+            "Title": "L4.7: Topological Sorting"
         },
         "Lecture 8": {
             "Transcript": "https://drive.google.com/file/d/1qgj5dALOK4q2g32iZCAf0evMT2rMMyfY/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/CVcChPiBAgQ",
+            "Title": "L4.8: Longest Path in DAGs"
         }
     },
     "Week 5": {
         "Lecture 1": {
             "Transcript": "https://drive.google.com/file/d/1gkfxobSKUDN34I5ZxKTQI-wgVNC3KxxI/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/Kxun2wSsKLM",
+            "Title": "L5.1: Shortest Paths in Weighted Graphs"
         },
         "Lecture 2": {
             "Transcript": "https://drive.google.com/file/d/1vAdBzz4BDWYWhM23q3eJMHJNw_wB4EUR/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/Qjf7krjTF5g",
+            "Title": "L5.2: Single Source Shortest Paths (Dijkstra's algorithm)"
         },
         "Lecture 3": {
             "Transcript": "https://drive.google.com/file/d/13AFji01kS_lk-5WWnjeXnAM0XpZyRlXL/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/SgULLcChnxQ",
+            "Title": "L5.3: Single Source Shortest Paths with Negative Weights (Bellman-Ford Algorithm)"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1jz6kcZ8yqx28_vFIOdSk09oDnxBWOLYL/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/9F8MM_KVJds",
+            "Title": "L5.4: All Pairs Shortest Paths (Floyd-Warshall algorithm)"
         },
         "Lecture 5": {
             "Transcript": "https://drive.google.com/file/d/101hCFGbKiFbEnueska7-c6iPVWkeNpX2/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/57DmQiDrkto",
+            "Title": "L5.5: Minimum Cost Spanning Trees"
         },
         "Lecture 6": {
             "Transcript": "https://drive.google.com/file/d/1Tp49SqEUOmuiZdgDK9wYssjf4tbReivW/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/ddT3JcFalsI",
+            "Title": "L5.6: Minimum Cost Spanning Trees (Prim's Algorithm)"
         },
         "Lecture 7": {
             "Transcript": "https://drive.google.com/file/d/1vW1fRKnkYZd7mjsA6ixVyG4XtjUDGrB-/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/c2LPB-Eqdj4",
+            "Title": "L5.7: Minimum Cost Spanning Trees (Kruskal's Algorithm)"
         }
     },
     "Week 6": {
         "Lecture 1": {
             "Transcript": "https://drive.google.com/file/d/1YELPBGZQ7ZiZWL_DGsjKLvDuVdT-RajI/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/Zxlor3u7x7c",
+            "Title": "L6.1: Union-Find Data Structure"
         },
         "Lecture 2": {
             "Transcript": "https://drive.google.com/file/d/1SGyjTfMtYD6rFWv4_4CZY9wwuhnNzknl/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/DAmSQfaurGs",
+            "Title": "L6.2: Priority Queues"
         },
         "Lecture 3": {
             "Transcript": "https://drive.google.com/file/d/13IF26JwuFuoNUm3Iqa4_xg6MsGP8V7JP/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/-bBwSWTp-aE",
+            "Title": "L6.3: Heaps"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1JBxxdy9P9UXV69ysoLgOyj-x7e46q2JU/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/_TY8IesVyXA",
+            "Title": "L6.4: Using Heaps in Algorithms"
         },
         "Lecture 5": {
             "Transcript": "https://drive.google.com/file/d/1sPW5O9U-UI7BpbcjrnbozFg7ZQ6bwpvN/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/6BXwmWK0VvE",
+            "Title": "L6.5: Search Trees"
         }
     },
     "Week 7": {
         "Lecture 1": {
             "Transcript": "https://drive.google.com/file/d/1ZDKZinwDuQskRZWX306czTrtMkLybaZT/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/L9ah47pNf-E",
+            "Title": "L7.1: Balanced Search Trees"
         },
         "Lecture 2": {
             "Transcript": "https://drive.google.com/file/d/1yf7wvRbb9dxlXqBVhjXNwWXNnjywEVkb/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/JfLewiAaPQ0",
+            "Title": "L7.2: Greedy Algorithms-Interval Scheduling"
         },
         "Lecture 3": {
             "Transcript": "https://drive.google.com/file/d/1eBTMdEW7iCww7LOlyo7U7I6Zr1Xf0K25/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/EBLpkKkQbTU",
+            "Title": "L7.3: Greedy Algorithms-Minimizing Lateness"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1jBs1e0nGWCEEcbEAjhDz7-lpGey5FhdO/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/N87FpkW8LnA",
+            "Title": "L7.4: Greedy Algorithms-Huffman Coding"
         }
     },
     "Week 8": {
         "Lecture 1": {
             "Transcript": "https://drive.google.com/file/d/1aS8VSVsyuJkyT-cjQatie3AoU2fnq98t/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/aEvoP-oOUv0",
+            "Title": "L8.1: Divide and Conquer-Counting inversions"
         },
         "Lecture 2": {
             "Transcript": "https://drive.google.com/file/d/1XYPoSAwL6ILZc0xu4D9xlbsWsWWS8Utm/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/vjjWGpy7DMk",
+            "Title": "L8.2: Divide and Conquer-Closest Pair of Points"
         },
         "Lecture 3": {
             "Transcript": "https://drive.google.com/file/d/1aaPLWPkll55DYo-IUBuoRD9Hhx-r8uAa/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/Y-4ZRutInQU",
+            "Title": "L8.3: Divide and Conquer-Integer Multiplication"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1o3a0aT366W5heOVUlEMQ86ltJiqiym7H/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/sl68fd-HdTI",
+            "Title": "L8.4: Divide and Conquer-Recursion Trees"
         },
         "Lecture 5": {
             "Transcript": "https://drive.google.com/file/d/1cd247DuSFMhcp0z5upNhF-7eYoR2hfoO/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/f8dhP521DHI",
+            "Title": "L8.5: Divide and Conquer-Quick Select"
+        },
+        "Lecture 6": {
+            "Transcript": "https://drive.google.com/file/d/1YRcUtUeCQwgbg44MvE64-p9ESQojLsDv/view?usp=drive_link",
+            "Video": "https://youtu.be/PQIuyAJ7D7k",
+            "Title": "L8.6: Implementation of Quick select and Fast select algorithms"
         }
     },
     "Week 9": {
         "Lecture 1": {
             "Transcript": "https://drive.google.com/file/d/1ndmc5JzEuZt6OX7GyZfmdKO2V9GGCAow/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/BfjdGOeH1XQ",
+            "Title": "L9.1: Dynamic Programming"
         },
         "Lecture 2": {
             "Transcript": "https://drive.google.com/file/d/1VYdh4ehIo3GJ_8kr4umKWvV-itovbfVh/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/MK-LS5KdYFA",
+            "Title": "L9.2: Memoization"
         },
         "Lecture 3": {
             "Transcript": "https://drive.google.com/file/d/1Tss2rWIljzunDG3O-FNleLjHCJdAgZMI/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/9U2CYxmE2kg",
+            "Title": "L9.3: Grid Paths"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1RkKidLxOChE0eGBhW_m1X-Sqm-Gx_L8L/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/nP21HMGTjjM",
+            "Title": "L9.4: Common Subwords and Subsequences"
         },
         "Lecture 5": {
             "Transcript": "https://drive.google.com/file/d/1Dc6QqyeoKaBFnncFAtnRrW6-RBV1VkER/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/q_YDH7eQEfw",
+            "Title": "L9.5: Edit Distance"
         },
         "Lecture 6": {
             "Transcript": "https://drive.google.com/file/d/1RLOcPOlYRfDMA8R_w3fNirqvZgAr2qD1/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/LDUx8Sf8urE",
+            "Title": "L9.6: Matrix Multiplication"
         }
     },
     "Week 10": {
         "Lecture 1": {
             "Transcript": "https://drive.google.com/file/d/1v6WMrhxhwpXSpM8HOOvtwN323_ofrGLZ/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/sho1os7g7OE",
+            "Title": "L10.1: String Matching"
         },
         "Lecture 2": {
             "Transcript": "https://drive.google.com/file/d/1p5oT0F1wWDj7Gjn6lcVPR0TcZ_rNGJXK/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/8mlan8WbwV0",
+            "Title": "L10.2: String Matching-Boyer-Moore Algorithm"
         },
         "Lecture 3": {
             "Transcript": "https://drive.google.com/file/d/19OfLkEsuZzbL71HW5qWbWCR1RieNSotD/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/HTf34RwxlTE",
+            "Title": "L10.3: String Matching-Rabin-Karp Algorithm"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1w9bGu5fcvYR3Sa1HIlwxZS51OyuFm2SV/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/W517g5t9PKE",
+            "Title": "L10.4: String Matching Using Automata"
         },
         "Lecture 5": {
             "Transcript": "https://drive.google.com/file/d/1IJQr3gsEBFIwuQ7s1mawUEFXPLDudyIv/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/IrVjHDGjmKk",
+            "Title": "L10.5: String Matching-Knuth-Morris-Pratt Algorithm"
         },
         "Lecture 6": {
             "Transcript": "https://drive.google.com/file/d/1PWW-Oo6j5qZIZ1AM3zt3a1pyXPQ6-17y/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/uNAJDkQQFE8",
+            "Title": "L10.6: String Matching-Tries"
         },
         "Lecture 7": {
             "Transcript": "https://drive.google.com/file/d/168RBsQBmT1HUkk1z1cAm3UUUzYHW-_sb/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/Tc6CJo8kFe8",
+            "Title": "L10.7: String Matching-Regular Expresssions"
         }
     },
     "Week 11": {
         "Lecture 1": {
             "Transcript": "https://drive.google.com/file/d/1_vrmMMTRdy7_t6xBVe4l9FsTRY3T_9W4/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/3YPqsJpYQJU",
+            "Title": "L11.1: Linear Programming"
         },
         "Lecture 2": {
             "Transcript": "https://drive.google.com/file/d/1NElkhiqfgTqF9pbx7BKELBis6Ih_1gy4/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/8cpSh48s5Bo",
+            "Title": "L11.2: Linear Programming-Production Planning"
         },
         "Lecture 3": {
             "Transcript": "https://drive.google.com/file/d/1nL-qlcpj9qPCiu2PAhRDo9hQ__37Lf2C/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/WrA2Cir5r8k",
+            "Title": "L11.3: Linear Programming-Bandwidth Allocation"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1VHsRVi-PhD6q7ov1EOcZUIxUyb8SWL-a/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/yC6ychEgaTc",
+            "Title": "L11.4: Network Flows"
         },
         "Lecture 5": {
             "Transcript": "https://drive.google.com/file/d/1TVEu18HTfYe3nfoN-4MxMe4V4FSQpibR/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/yZt9FRXxgPQ",
+            "Title": "L11.5: Reductions"
         },
         "Lecture 6": {
             "Transcript": "https://drive.google.com/file/d/1RYMY1Rrj0Y8LZpeHIYc8kb-tc0Gt2vso/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/ar0jgfcGLvw",
+            "Title": "L11.6: Intractability-Checking Algorithms"
         },
         "Lecture 7": {
             "Transcript": "https://drive.google.com/file/d/1eD7Oz8qghREizw0prje2TKvPpz6AcZx8/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/IT7pcW-50YI",
+            "Title": "L11.7: Intractability-P and NP"
         }
     },
     "Week 12": {
         "Lecture 1": {
             "Transcript": "https://drive.google.com/file/d/1ggaRgNxrnGyTfWfxLDMwpsb0xA1-S6QK/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/gq9UySG-1Jw",
+            "Title": "Summary of weeks 1 to 3"
         },
         "Lecture 2": {
             "Transcript": "https://drive.google.com/file/d/1iX4eRkIgs5pt73dZ2Nasn82HfiYB4trK/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/5EKdpXXZ8Uc",
+            "Title": "Summary of weeks 4 to 6"
         },
         "Lecture 3": {
             "Transcript": "https://drive.google.com/file/d/1qK-KlJ2Pj1oXg51Xt1T8yg2pY_Ta9d01/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/8Z07WpmjbIw",
+            "Title": "Summary of weeks 7 to 9"
         },
         "Lecture 4": {
             "Transcript": "https://drive.google.com/file/d/1AtBN24JMFKe-BbQPw8TMgF1JezcNliC_/view?usp=drive_link",
-            "Video": "<VIDEO_URL_HERE>",
-            "Title": "<TRANSCRIPT_TITLE_HERE>"
+            "Video": "https://youtu.be/6rjPI_KNvTI",
+            "Title": "Summary of weeks 10 & 11"
         }
     }
 }
