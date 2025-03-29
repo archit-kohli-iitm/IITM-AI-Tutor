@@ -23,6 +23,7 @@
           </button>
         </div>
         <hr>
+        <div class="sidebar-container px-2">
         <!-- Chat Titles under Subject -->
           <div v-for="chat in [...chatList].reverse()" :key="chat.chat_id" class="d-flex justify-content-center mt-1" style="padding-bottom: 10px;">
         
@@ -49,12 +50,13 @@
         
           </div>
         </div>
+        </div>
       </div>
       
       <!-- Chat Area -->
       <div class="col-9 d-flex flex-column bg-light p-3 border">
         <!-- Set a fixed height and make it scrollable -->
-        <div ref="chatContainer" class="flex-grow-1 border rounded p-3 bg-white chat-container">
+        <div ref="chatContainer" class="border rounded p-3 bg-white chat-container">
           <div v-for="(message, index) in messages" :key="index" class="mt-2">
             <!-- msg bg -->
             <p class="mb-1" v-html="renderMarkdown(message)" :class="message.startsWith('You:') ? 'you-message' : 'ai-tutor-message'"></p>
@@ -424,6 +426,7 @@ export default {
 <style scoped>
 .container-fluid {
   height: 100vh;
+  overflow-y: hidden;
 }
 
 .navbar {
@@ -496,7 +499,12 @@ p {
 
 /* Ensure the chat container has a fixed height and scrolling */
 .chat-container {
-  height: 70vh; /* or any value you prefer, or max-height: 500px */
+  height: 78vh; /* or any value you prefer, or max-height: 500px */
+  overflow-y: auto; /* Enable scrolling when content exceeds the height */
+}
+
+.sidebar-container {
+  height: 78vh; /* or any value you prefer, or max-height: 500px */
   overflow-y: auto; /* Enable scrolling when content exceeds the height */
 }
 
