@@ -2,8 +2,7 @@
 
 ## Frontend
 
-### The application frontend is written in Vue and follows the standard Vue 3 code structure. The frontend has also been deployed and can be found at [ai-study-iitm.vercel.app](https://ai-study-iitm.vercel.app/)
-### Instructions to run the frontend locally:-
+The application frontend is written in Vue and follows the standard Vue 3 code structure. The frontend has also been deployed and can be found at [ai-study-iitm.vercel.app](https://ai-study-iitm.vercel.app/)
 
 ### Prerequisites
 - Node.js (recommended: v22.12.0)
@@ -11,7 +10,10 @@
 
 ### Installation
 
-1. `cd` into the frontend folder
+1. `cd` into the `Frontend` folder
+```bash
+cd Frontend
+```
 
 2. Install dependencies
 ```bash
@@ -27,9 +29,13 @@ npm run dev
 
 The application will be available at [http://localhost:5173](http://localhost:5173/)
 
-### Project Structure
+### To connect with the backend
+1. **Deployed Locally** - Ensure that the `axios.defaults.baseURL` in `axios.js` points to the backend (http://127.0.0.1:5000/)
+2. **Deployed on cloud** - Ensure that the `axios.defaults.baseURL` in `axios.js` points to the render backend (https://ai-tutor-iitm-backend.onrender.com)
 
-The project follows the standard Vue 3 structure with the following key files:
+### Frontend Structure
+
+The frontend follows the standard Vue 3 structure with the following key files:
 
 - `package.json`: Project dependencies and scripts
 - `vite.config.js`: Vite configuration file
@@ -43,7 +49,7 @@ The project follows the standard Vue 3 structure with the following key files:
 
 ## Backend 
 
-### The application backend is written in Flask and follows the standard Flask REST API structure and best code practices. The backend has also been deployed and can be found at [ai-study-iitm-backend.onrender.com](https://ai-tutor-iitm-backend.onrender.com)
+ The application backend is written in Flask and follows the standard Flask REST API structure and best code practices. The backend has also been deployed and can be found at [ai-study-iitm-backend.onrender.com](https://ai-tutor-iitm-backend.onrender.com)
 
 ### Features
 - RESTful API architecture
@@ -62,10 +68,10 @@ The project follows the standard Vue 3 structure with the following key files:
 - **Flask-JWT-Extended** - Authentication and token management
 - **Flask-RESTx** - API documentation and request parsing
 - **Flask-SQLAlchemy** - ORM for database interactions
-- **LangChain-Google-GenAI** - AI model integration for chatbot functionality
+- **Google-GenAI** - Gemini model integration for chatbot functionality
 - **Qdrant-Client [FastEmbed]** - Vector database for similarity search
 - **Psutil** - System monitoring utilities
-Here's a cleaner and more structured version of your README setup instructions:  
+- **PyTest** - Framework for testing
 
 ### Installation
 1. Open the folder on the local system:
@@ -107,7 +113,7 @@ Here's a cleaner and more structured version of your README setup instructions:
 ### API Endpoints
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/default/health` | Check API stats |
+| GET | `/health` | Check API stats |
 | POST | `/auth/login` | Authenticate user |
 | POST | `/auth/logout` | Logout user |
 | POST | `/auth/signup` | Register a new user |

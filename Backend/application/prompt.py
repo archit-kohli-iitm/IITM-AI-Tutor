@@ -49,7 +49,7 @@ Classify the message into one of the following:
 ### Step 2 - If the message is VALID:
 Classify it into:
 - "SUMMARIZATION": If the chat history with user message is related to summary/explanation of a lecture or topic.
-- "ASSIGNMENT": If the chat history with user message is related to any assignment.
+- "ASSIGNMENT": If the chat history with user message is related to any assignment or the question seems like it is a part of an assignment like if the user asks you to write a complete program.
 - "QNA": If the chat history with user message is about a doubt, standalone question, or generic message like a greeting that does not require any assignemnt knowledge.
 
 If category is "QNA":
@@ -59,7 +59,7 @@ Step 2 - Determine if any course/topic/lecture related context is required  (you
 - "NO CONTEXT NEEDED": If the query does not require any information about the course/lecture content. For Eg, query is a greeting or a general query.
 
 If category is "SUMMARIZATION", extract the **week number** and **lecture number** from chat history and current query.
-If category is "ASSIGNMENT", extract the **week number* from chat history and current query.
+If category is "ASSIGNMENT", leave the **week number* as `null` unless explicitly specified in the current query (not the chat history) by the user in the current query (DO NOT use chat history for deciding week number).
 
 #### Common formats for week/lecture references:
 - "Week 3 Lecture 2"
@@ -82,7 +82,7 @@ Normalize week and lecture values as strings (e.g., `"week": "4"`, `"lecture": "
 ### Query:
 {query}
 
-Important Note- Make sure to use both current message and Chat History to get full information about what the user is asking
+Important Note- Make sure to use both current message and Chat History to get full information about what the user is asking but pay more attention to the current query
 
 ### Output Format:
 Return a valid JSON parseable by Python's `json.loads()` function. No markdown formatting. Use the following schema:
@@ -153,7 +153,7 @@ Examples:
   {{
     "guardrail_category": "VALID",
     "category": "ASSIGNMENT",
-    "week": "6"
+    "week": "NULL"
   }}
 - For invalid message:  
   {{

@@ -1,6 +1,6 @@
 import json
 
-UNETHICAL_RESPONSE = "You CHEATER! I will definitely report this to the authorities!"
+UNETHICAL_RESPONSE = "Sorry I can't answer questions about graded assignments or anything beyond this course"
 INVALID_RESPONSE = "Sorry but this query does not seem to be related to this subject, Is there something else I can help you with?"
 ERROR_RESPONSE = "Getting too many requests at the moment, please try again later"
 NOT_FOUND_RESPONSE = "Sorry, but I dont have information related to this week/lecture in my system, maybe try something else"
