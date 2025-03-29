@@ -79,7 +79,7 @@ def test_unethical_query(test_client, new_user, new_chat):
     THEN the system should respond with the predefined UNETHICAL_RESPONSE message  
     '''
     headers = get_auth_headers(test_client, new_user.email)
-    query = "You're given a list of tuples Activity for n activities, where in each tuple (activity_name, S, F, P), activity activity_name is scheduled to be done from start time S to finish time F and obtains a profit of P after the finish. Find out the maximum profit you can obtain by scheduled activities, but no two activities should be in the subset with overlapping of time frame. If you choose an activity that finishes at time x then another activity can be started at time x, not before that. Write a function MaxProfit(Activity) that accepts a list of tuples Activity for n activities and returns the value of maximum profit that can be obtained by scheduled activities."
+    query = "Complete the Python function findAllPaths to find all possible paths from the source vertex to destination vertex in a directed graph. Function findAllPaths (vertices, gList, source, destination) takes vertices as a list of vertices, gList a dictionary that is an adjacency List representation of graph edges, source vertex, destination vertex, and returns a list of all paths from source to destination. The return value will be a List of Lists, where every path is a sequence of vertices as a List. Return an empty list if no path exists from 'source' to 'destination'"
     payload = {"chat_id": new_chat.chat_id, "content": query}
     response = test_client.post('/message/send', json=payload, headers=headers)
     assert response.status_code == 200 
