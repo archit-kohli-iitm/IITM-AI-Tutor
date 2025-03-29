@@ -3,6 +3,7 @@ from application.agent import RAGModel
 from dotenv import load_dotenv
 import os
 import time
+import re
 
 import logging
 logger = logging.getLogger(__name__)
@@ -43,8 +44,10 @@ def getChatHistory(messages,msg_limit=None):
     if not messages:
         return None
     out = ""
+    pattern = r"\n*\n*##### Sources:\n(?:- \[.*?\]\(.*?\)\n?)+"
     for message in messages if not msg_limit else messages[-msg_limit:]:
-        out += f"{message.timestamp} - {message.msg_type}: {message.content}\n"
+        content =  re.sub(pattern, "", message.content)
+        out += f"{message.timestamp} - {message.msg_type}: {content}\n"
     return out
 
 def getContextHistory(messages,ctx_limit=None):
